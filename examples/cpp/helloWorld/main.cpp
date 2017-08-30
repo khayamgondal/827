@@ -1,4 +1,5 @@
 #include <iostream>
+const int MAX = 100;
 int i = 19;
 
 namespace MySpace {
@@ -15,6 +16,7 @@ void f(int x) {
 
 int main() {
   int i = 99;
+  int a[i];
   f(i);
   std::cout << "i is: " << i << std::endl;
   MySpace::f(i);
