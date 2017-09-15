@@ -11,9 +11,9 @@ abc      [abc]
 letter   [a-z]
 
 %%
-{abc}      { f("Matched a|b|c"); }
+{abc}               { f("Matched a|b|c"); }
 (?x:{letter}*)      { /*f("Matched letter"); */ }
-.             { std::cout << "caps" << std::endl; }
+.                   { std::cout << "caps" << std::endl; }
 %%
 int yywrap() { 
 return 1; 
