@@ -18,7 +18,7 @@ letter      [a-zA-Z]
 c             { std::cout << "never gets here!" << std::endl;  }
 ab            { std::cout << "Matching ab" << std::endl;       }
 %{ Question: %}
-(?# why does it choose the next rule over first 3?)
+(?# why does is choose the next rule chosen over first 3? when?)
 ^0            { std::cout << "match 0 at eol" << std::endl;    }
 {letter}$     { std::cout << "match  1 letter at eol" << std::endl; }
 {letter}*     { std::cout << "bunches of letters" << std::endl;}
