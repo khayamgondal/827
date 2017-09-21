@@ -19,7 +19,7 @@ aabb          { std::cout << "Matching aabb" << std::endl;     }
 a*b*          { std::cout << "Matching a*b*" << std::endl;     }
 {letter}*     { std::cout << "Matching 'letter'" << std::endl; }
 .             { }
-"\n"          {}
+\n            {}
 %%
 int yywrap() { return 1; }
 
