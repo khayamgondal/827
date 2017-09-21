@@ -4,6 +4,8 @@ extern int yylex();
 void yyerror(const char * msg) { std::cout << msg << std::endl; }
 %}
 %token CR
+%token LPAR
+%token RPAR
 %%
 
 lines   : lines expr CR
@@ -14,7 +16,7 @@ lines   : lines expr CR
         | { ; }
         ;
 
-expr    : '(' expr ')' expr
+expr    : LPAR expr RPAR expr
            { $$ = 1; }
         |
         ;

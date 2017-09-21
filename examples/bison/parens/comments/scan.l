@@ -9,8 +9,8 @@
 "/*"           { BEGIN(COMMENT); }
 <COMMENT>"*/"  { BEGIN(INITIAL); }
 
-"("       { return '('; }
-")"       { return ')'; }
+"("       { return LPAR; }
+")"       { return RPAR; }
 "\n"      { return CR; }
 .         { ; }
 
