@@ -6,8 +6,6 @@ void yyerror(const char * msg);
 %}
 
 %token CR NUMBER
-%left PLUS MINUS
-%left MULT DIV
 
 %%
 lines   : lines expr CR
