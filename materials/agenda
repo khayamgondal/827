@@ -1,9 +1,13 @@
 
 Thur, Sept 28:
-  -- Review simple calcualtor
+  -- Review simple calculator
+       examples/bison/calculator/simple
   -- do calculator in debug mode
+       examples/bison/calculator/debug
   -- type the parse stack
+       examples/bison/calculator/typedStack
   -- Bison & flex automatically track line no's
+       examples/bison/calculator/lineno
   -- Project #3
 
 Tues, Sept 26:
