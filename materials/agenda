@@ -1,0 +1,50 @@
+
+Thur, Sept 28:
+  -- Review simple calculator
+       examples/bison/calculator/simple
+  -- do calculator in debug mode
+       examples/bison/calculator/debug
+  -- type the parse stack
+       examples/bison/calculator/typedStack
+  -- Bison & flex automatically track line no's
+       examples/bison/calculator/lineno
+  -- Project #3
+
+Tues, Sept 26:
+  -- Quiz will be Tuesday, Oct 3rd
+  -- Intro to Python 2.7.2: while, for, functions, list comprehension,
+       indentation, duck typing
+  -- Intro to McCabe Cyclomatic Complexity
+  -- Draft of Project #3
+       mine and pythons numbers for x.py
+       pythons numbers of y.py
+
+  -- Intro to Parser for Python 2.7.2
+  -- Bottom up parsing and Bison
+       Why do we care how Bison parses? Can't we just trust it?
+       Just do it! (cf Nike)
+
+Thur, Sept 21:
+  -- Project #2
+  -- ESEM 2017, intro to Python
+  -- vectors: iterators, ranged for, erase, push_back, 
+     push_front, emplace_back
+  -- flex: states
+  -- bison: bottom up parsing
+    -- balanced parens -- count them
+
+Tues, Sept 19:
+  -- My web page
+  -- New spec for proj #2
+  -- New flex slides: smallest, repattern
+  -- vectors
+  -- maps
+  -- give back quiz #1
+
+Thur, Sept 14
+-- Office hours
+-- Quiz #1
+-- Flex slides
+-- play with flex & reg expr
+-- C++ stack
+-- talk about project #2
