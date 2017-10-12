@@ -5,7 +5,6 @@ letter      [a-zA-Z]
 digit       [0-9]
 ident       {letter}({letter}|{digit})*
 
-extern      yylval
 %%
 
 "="       { return EQ; }
@@ -22,6 +21,9 @@ extern      yylval
             return IDENT; 
           }
 "\n"      { return CR; }
-
+.         {}
 %%
-int yywrap() { return 1; }
+int yywrap() { 
+  yylex_destroy();
+  return 1; 
+}
