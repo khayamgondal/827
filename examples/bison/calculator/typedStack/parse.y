@@ -24,7 +24,9 @@ std::map<std::string, int> table;
 lines   : lines expr CR
           { std::cout << $2 << std::endl; }
         | lines IDENT EQ expr CR
-          { table[$2] = $4;               }
+          { table[$2] = $4;               
+            delete [] $2;
+          }
         | lines CR
         | { ; }
         ;
