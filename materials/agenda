@@ -1,5 +1,40 @@
 
+Tues, Oct 19:
+  -- In Python:
+    -- what is -1/2
+    -- what is -1/2-1/2
+  -- Tour of the repo: please ask if something's missing
+  -- Semantic action execution
+  -- Inheritance, 3 base class fns
+  -- Singleton Pattern
+  -- Symbol tables
+  -- ASTs
+  -- Project #4
+
+Tues, Oct 10:
+  -- Bison, conflicts, & trace
+  -- Typing the stack
+  -- Project #3
+  -- Answer keys for #1 and #2
+  -- Quizzes and projects ==> Thurs
+  -- Exam: Oct 24th
+  -- Project #4
+
+Thurs, Oct 5:
+  -- locations:
+    -- parens 
+      -- Do semantic actions first
+      -- Then do locations!
+    -- calculator
+  -- Project #3:
+    -- what about elif?
+  -- Quiz #2
+
+Tues, Oct 3:
+  -- Quiz #2
+
 Thur, Sept 28:
+  -- agenda is in Materials dir of course repo
   -- Review simple calculator
        examples/bison/calculator/simple
   -- do calculator in debug mode
