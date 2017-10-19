@@ -25,12 +25,6 @@ ident       {letter}({letter}|{digit})*
 .         {}
 %%
 int yywrap() { 
-<<<<<<< HEAD
                yylex_destroy();
                return 1; 
              }
-=======
-  yylex_destroy();
-  return 1; 
-}
->>>>>>> ba05a63eafe7acddbdd7c89054a00a836e1fe87f
