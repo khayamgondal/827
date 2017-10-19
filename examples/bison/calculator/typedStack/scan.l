@@ -21,7 +21,11 @@ extern      yylval
             strcpy(yylval.id, yytext);
             return IDENT; 
           }
+.         {}
 "\n"      { return CR; }
 
 %%
-int yywrap() { return 1; }
+int yywrap() { 
+               yylex_destroy();
+               return 1; 
+             }
