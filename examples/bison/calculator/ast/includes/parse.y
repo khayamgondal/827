@@ -6,7 +6,6 @@
 
 extern int yylex();
 void yyerror(const char * msg);
-void astFree(Node*);
 %}
 
 %union {
@@ -49,5 +48,3 @@ expr    : expr PLUS expr   { $$ = new AddBinaryNode($1, $3); }
 %%
 void yyerror(const char * msg) { std::cout << msg << std::endl; }
 
-void astFree(Node* root) {
-}
