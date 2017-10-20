@@ -20,10 +20,11 @@ ident       {letter}({letter}|{digit})*
             strcpy(yylval.id, yytext);
             return IDENT; 
           }
+.         {}
 "\n"      { return CR; }
 .         {}
 %%
 int yywrap() { 
-  yylex_destroy();
-  return 1; 
-}
+               yylex_destroy();
+               return 1; 
+             }
