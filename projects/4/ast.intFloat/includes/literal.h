@@ -30,6 +30,7 @@ public:
   FloatLiteral(float _val): val(_val) {}
 
   virtual Literal* operator+(Literal& rhs) {
+    std::cout << "ONE" <<std::endl;
     return rhs.opPlus(val);
   }
   virtual Literal* opPlus(float lhs) {
@@ -85,7 +86,8 @@ public:
     return rhs.opPlus(val);
   }
   virtual Literal* opPlus(float lhs) {
-    return new FloatLiteral(static_cast<float>(val) + lhs);
+    std::cout << "TWO" << std::endl;
+    return new FloatLiteral(val + lhs);
   }
   virtual Literal* opPlus(int lhs) {
     return new IntLiteral(lhs + val);
