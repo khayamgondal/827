@@ -12,10 +12,6 @@
 extern void yyerror(const char*);
 extern void yyerror(const char*, const char);
 
-// Class Literal inherits from Node; so I'm putting the include here!
-// Alternatively, we could put class Node in a file by itself and
-// then only include it into literal.h
-
 void freeAST(Node*);
 
 class IdentNode : public Node {
