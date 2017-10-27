@@ -1,5 +1,5 @@
 #include "symbolTable.h"
-#include "ast.h"
+#include "literal.h"
 
 SymbolTable& SymbolTable::getInstance() {
   static SymbolTable instance;

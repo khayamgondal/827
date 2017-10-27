@@ -9,8 +9,8 @@ class Literal;
 
 class SymbolTable {
 public:
-  static SymbolTable& getInstance();
-  void setValue(const std::string& name, Literal* val);
+  static   SymbolTable& getInstance();
+  void     setValue(const std::string& name, Literal* val);
   Literal* getValue(const std::string& name) const;
 private:
   std::map<std::string, Literal*> table;
