@@ -27,13 +27,13 @@ void yyerror(const char * msg);
 lines   : lines expr CR
           { 
             ($2)->eval()->print();
-            //freeAST($2);
+            freeAST($2);
           }
         | lines IDENT EQ expr CR
           { Node* lhs = new IdentNode($2); 
             $$ = new AsgBinaryNode(lhs, $4);
             delete [] $2;
-            //freeAST($$);
+            freeAST($$);
           }
         | lines CR
         | { ; }

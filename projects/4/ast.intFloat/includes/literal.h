@@ -4,23 +4,23 @@ class Literal : public Node {
 public:
   virtual ~Literal() {}
 
-  virtual Literal* operator+(Literal& rhs)=0;
-  virtual Literal* opPlus(float)=0;
-  virtual Literal* opPlus(int)=0;
+  virtual const Literal* operator+(const Literal& rhs) const =0;
+  virtual const Literal* opPlus(float) const =0;
+  virtual const Literal* opPlus(int) const =0;
 
-  virtual Literal* operator*(Literal& rhs)=0;
-  virtual Literal* opMult(float)=0;
-  virtual Literal* opMult(int)=0;
+  virtual const Literal* operator*(const Literal& rhs) const =0;
+  virtual const Literal* opMult(float) const =0;
+  virtual const Literal* opMult(int) const =0;
 
-  virtual Literal* operator-(Literal& rhs)=0;
-  virtual Literal* opSubt(float)=0;
-  virtual Literal* opSubt(int)=0;
+  virtual const Literal* operator-(const Literal& rhs) const =0;
+  virtual const Literal* opSubt(float) const =0;
+  virtual const Literal* opSubt(int) const =0;
 
-  virtual Literal* operator/(Literal& rhs)=0;
-  virtual Literal* opDiv(float)=0;
-  virtual Literal* opDiv(int)=0;
+  virtual const Literal* operator/(const Literal& rhs) const =0;
+  virtual const Literal* opDiv(float) const =0;
+  virtual const Literal* opDiv(int) const =0;
 
-  virtual Literal* eval() const = 0;
+  virtual const Literal* eval() const = 0;
   virtual void print() const { 
     std::cout << "No Way" << std::endl; 
   }
@@ -30,47 +30,48 @@ class FloatLiteral: public Literal {
 public:
   FloatLiteral(float _val): val(_val) {}
 
-  virtual Literal* operator+(Literal& rhs) {
+  virtual const Literal* operator+(const Literal& rhs) const  {
     return rhs.opPlus(val);
   }
-  virtual Literal* opPlus(float lhs) {
+  virtual const Literal* opPlus(float lhs) const  {
     return new FloatLiteral(lhs + val);
   }
-  virtual Literal* opPlus(int lhs) {
+  virtual const Literal* opPlus(int lhs) const  {
     return new FloatLiteral(lhs + val);
   }
 
-  virtual Literal* operator-(Literal& rhs) {
+  virtual const Literal* operator-(const Literal& rhs) const  {
     return rhs.opSubt(val);
   }
-  virtual Literal* opSubt(float lhs) {
+  virtual const Literal* opSubt(float lhs) const  {
     return new FloatLiteral(lhs - val);
   }
-  virtual Literal* opSubt(int lhs) {
+  virtual const Literal* opSubt(int lhs) const  {
     return new FloatLiteral(lhs - val);
   }
 
-  virtual Literal* operator*(Literal& rhs) {
+  virtual const Literal* operator*(const Literal& rhs) const  {
     return rhs.opMult(val);
   }
-  virtual Literal* opMult(float lhs) {
+  virtual const Literal* opMult(float lhs) const  {
     return new FloatLiteral(lhs * val);
   }
-  virtual Literal* opMult(int lhs) {
+  virtual const Literal* opMult(int lhs) const  {
     return new FloatLiteral(static_cast<float>(lhs) * val);
   }
 
-  virtual Literal* operator/(Literal& rhs) {
+  virtual const Literal* operator/(const Literal& rhs) const  {
     return rhs.opDiv(val);
   }
-  virtual Literal* opDiv(float lhs) {
+  virtual const Literal* opDiv(float lhs) const  {
     return new FloatLiteral(lhs / val);
   }
-  virtual Literal* opDiv(int lhs) {
+  virtual const Literal* opDiv(int lhs) const  {
     return new FloatLiteral(lhs / val);
   }
 
-  virtual Literal* eval() const { return new FloatLiteral(val); }
+  //virtual Literal* eval() const { return new FloatLiteral(val); }
+  virtual const Literal* eval() const { return this; }
   virtual void print() const { 
     std::cout << "FLOAT: " << val << std::endl; 
   }
@@ -82,47 +83,47 @@ class IntLiteral: public Literal {
 public:
  IntLiteral(int _val): val(_val) {}
 
-  virtual Literal* operator+(Literal& rhs) {
+  virtual const Literal* operator+(const Literal& rhs) const  {
     return rhs.opPlus(val);
   }
-  virtual Literal* opPlus(float lhs) {
+  virtual const Literal* opPlus(float lhs) const  {
     return new FloatLiteral(static_cast<float>(val) + lhs);
   }
-  virtual Literal* opPlus(int lhs) {
+  virtual const Literal* opPlus(int lhs) const  {
     return new IntLiteral(lhs + val);
   }
 
-  virtual Literal* operator-(Literal& rhs) {
+  virtual const Literal* operator-(const Literal& rhs) const  {
     return rhs.opSubt(val);
   }
-  virtual Literal* opSubt(float lhs) {
+  virtual const Literal* opSubt(float lhs) const  {
     return new FloatLiteral(lhs - val);
   }
-  virtual Literal* opSubt(int lhs) {
+  virtual const Literal* opSubt(int lhs) const  {
     return new IntLiteral(lhs - val);
   }
 
-  virtual Literal* operator*(Literal& rhs) {
+  virtual const Literal* operator*(const Literal& rhs) const  {
     return rhs.opMult(val);
   }
-  virtual Literal* opMult(float lhs) {
+  virtual const Literal* opMult(float lhs) const  {
     return new FloatLiteral(lhs * val);
   }
-  virtual Literal* opMult(int lhs) {
+  virtual const Literal* opMult(int lhs) const  {
     return new IntLiteral(lhs * val);
   }
 
-  virtual Literal* operator/(Literal& rhs) {
+  virtual const Literal* operator/(const Literal& rhs) const  {
     return rhs.opDiv(val);
   }
-  virtual Literal* opDiv(float lhs) {
+  virtual const Literal* opDiv(float lhs) const  {
     return new FloatLiteral(lhs / val);
   }
-  virtual Literal* opDiv(int lhs) {
+  virtual const Literal* opDiv(int lhs) const  {
     return new IntLiteral(lhs / val);
   }
 
-  virtual Literal* eval() const { return new IntLiteral(val); }
+  virtual const Literal* eval() const { return new IntLiteral(val); }
   virtual void print() const { 
     std::cout << "INT: " << val << std::endl; 
   }

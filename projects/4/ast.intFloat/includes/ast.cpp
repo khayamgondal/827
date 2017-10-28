@@ -1,4 +1,5 @@
 #include <iostream>
+#include <typeinfo>
 #include <sstream>
 #include <cmath>
 #include <cstdlib>
@@ -17,68 +18,67 @@ void freeAST(Node* node) {
   }
 }
 
-Literal* IdentNode::eval() const { 
-  Literal* val = SymbolTable::getInstance().getValue(ident);
+const Literal* IdentNode::eval() const { 
+  const Literal* val = SymbolTable::getInstance().getValue(ident);
   return val;
 }
 
 
 AsgBinaryNode::AsgBinaryNode(Node* left, Node* right) : 
   BinaryNode(left, right) { 
-  Literal* res = right->eval();
+  const Literal* res = right->eval();
   const std::string n = static_cast<IdentNode*>(left)->getIdent();
   SymbolTable::getInstance().setValue(n, res);
 }
 
 
-Literal* AsgBinaryNode::eval() const { 
+const Literal* AsgBinaryNode::eval() const { 
   if (!left || !right) {
     throw "error";
   }
-  Literal* res = right->eval();
+  const Literal* res = right->eval();
 
   const std::string n = static_cast<IdentNode*>(left)->getIdent();
   SymbolTable::getInstance().setValue(n, res);
   return res;
 }
 
-Literal* AddBinaryNode::eval() const { 
+const Literal* AddBinaryNode::eval() const { 
   if (!left || !right) {
     throw "error";
   }
-  Literal* x = left->eval();
-  Literal* y = right->eval();
+  const Literal* x = left->eval();
+  const Literal* y = right->eval();
   return (*x+*y);
 }
 
-Literal* SubBinaryNode::eval() const { 
+const Literal* SubBinaryNode::eval() const { 
   if (!left || !right) {
     throw "error";
   }
-  Literal* x = left->eval();
-  Literal* y = right->eval();
+  const Literal* x = left->eval();
+  const Literal* y = right->eval();
   return ((*x)-(*y));
 }
 
-Literal* MulBinaryNode::eval() const { 
+const Literal* MulBinaryNode::eval() const { 
   if (!left || !right) {
     throw "error";
   }
-  Literal* x = left->eval();
-  Literal* y = right->eval();
+  const Literal* x = left->eval();
+  const Literal* y = right->eval();
   return ((*x)*(*y));
 }
 
-Literal* DivBinaryNode::eval() const { 
+const Literal* DivBinaryNode::eval() const { 
   if (!left || !right) {
     throw "error";
   }
-  Literal* x = left->eval();
-  Literal* y = right->eval();
+  const Literal* x = left->eval();
+  const Literal* y = right->eval();
   if ( y->eval() == 0 ) {
     throw std::string("ZeroDivisionError");
   }
-
   return ((*x)/(*y));
 }
 
