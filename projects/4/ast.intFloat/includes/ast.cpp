@@ -76,9 +76,6 @@ const Literal* DivBinaryNode::eval() const {
   }
   const Literal* x = left->eval();
   const Literal* y = right->eval();
-  if ( y->eval() == 0 ) {
-    throw std::string("ZeroDivisionError");
-  }
   return ((*x)/(*y));
 }
 
