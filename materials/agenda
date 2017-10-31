@@ -1,5 +1,36 @@
 
-Tues, Oct 19:
+Tues, Oct 31:
+  -- review operator overload
+  -- Review ast.intFloat
+  -- How does Python grammar handle +/- for binary and unary
+     Unfortunately, +/- reduce to the same rule.
+     For unary, it's pick_unop
+     for binary, it's pick_PLUS_MINUS
+  -- Track getting PLUS to work for mypy
+  -- discuss how to eliminate:
+  includes/parse.y:479.11-14: warning: type clash on default action: <node>
+  -- Discuss Exam #1
+
+Thur, Oct 26:
+  -- Discuss specs for Project 4: incorporate an AST into mypy, eval it
+  -- Review contents of project/3 and  project/4
+  -- Review inheritance &  polymorphism (find the shapes dir in repo) 
+     -- relate polymorphism to project #4 and nodes of an AST
+     -- how  can we use polymorphism for multiple types?
+        -- don't - use strings
+        -- do - use polymorphism, but types are a problem in poly. Why?
+  -- Review test question about precedence set by grammar. Why do this?
+  -- Review test question about inheritance. Why do this?
+  -- Motivate and present the Visitor Pattern
+  -- Review ast
+  -- Present code in literals dir
+  -- present code in ast.intFloat
+  -- Discuss how to incorporate addition into MyPy
+
+Tues, Oct 24:
+  -- Exam#1
+
+Thus, Oct 19:
   -- In Python:
     -- what is -1/2
     -- what is -1/2-1/2
