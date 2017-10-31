@@ -1,10 +1,10 @@
-CCC = clang++
+CCC = g++
 LEX = flex
 YACC = bison
 CFLAGS = -g -std=c++11 -W -Wall -Weffc++ -Wextra -pedantic -O0
 LEXFLAGS = -Wno-unused -Wno-sign-compare -Wno-deprecated-register
 
-OBJS = main.o parse.tab.o lex.yy.o ast.o symbolTable.o
+OBJS = main.o parse.tab.o lex.yy.o ast.o symbolTable.o poolOfNodes.o
 
 run: $(OBJS)
 	$(CCC) $(CFLAGS) -o run $(OBJS)
@@ -29,6 +29,10 @@ ast.o: includes/ast.cpp includes/ast.h includes/literal.h
 
 symbolTable.o: includes/symbolTable.cpp includes/symbolTable.h
 	$(CCC) $(CFLAGS) -c includes/symbolTable.cpp
+
+poolOfNodes.o: includes/poolOfNodes.cpp includes/poolOfNodes.h \
+  includes/node.h
+	$(CCC) $(CFLAGS) -c includes/poolOfNodes.cpp
 	
 clean:
 	rm -f run *.o parse.tab.c lex.yy.c
