@@ -7,6 +7,7 @@ public:
   virtual Literal* operator+(Literal& rhs)=0;
   virtual Literal* opPlus(float)=0;
   virtual Literal* opPlus(int)=0;
+
   virtual Literal* operator*(Literal& rhs)=0;
   virtual Literal* opMult(float)=0;
   virtual Literal* opMult(int)=0;
