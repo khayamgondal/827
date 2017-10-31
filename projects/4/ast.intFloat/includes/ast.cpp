@@ -7,17 +7,6 @@
 #include "ast.h"
 #include "symbolTable.h"
 
-void freeAST(Node* node) {
-  if ( node ) {
-    BinaryNode* temp = dynamic_cast<BinaryNode*>(node);
-    if ( temp ) {
-      freeAST(temp->getLeft());
-      freeAST(temp->getRight());
-    }
-    delete node;
-  }
-}
-
 const Literal* IdentNode::eval() const { 
   const Literal* val = SymbolTable::getInstance().getValue(ident);
   return val;
