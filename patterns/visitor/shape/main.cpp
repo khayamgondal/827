@@ -12,6 +12,7 @@ void print(const std::list<Shape*> & shapes) {
 float getArea(const std::list<Shape*> & shapes, 
               AverageAreaVisitor & areaVisitor) {
   for ( Shape* shape : shapes ) {
+    // areaVisitor.visit(shape);
     shape->accept(&areaVisitor);
   }
   return areaVisitor.getAvg();
