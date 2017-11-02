@@ -56,7 +56,11 @@ const Literal* MulBinaryNode::eval() const {
   }
   const Literal* x = left->eval();
   const Literal* y = right->eval();
-  return ((*x)*(*y));
+  if (!isPow)
+  	return ((*x)*(*y));
+  else {
+	  return x->Pow(*y);
+  }
 }
 
 const Literal* DivBinaryNode::eval() const { 
@@ -86,4 +90,11 @@ const Literal* ModBinaryNode::eval() const {
   return ((*x)%(*y));
 }
 
-
+/*const Literal* PowBinaryNode::eval() const { 
+  if (!left || !right) {
+    throw "error";
+  }
+  const Literal* x = left->eval();
+  const Literal* y = right->eval();
+  return ((*x)#(*y)); // # is power
+}*/

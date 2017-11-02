@@ -60,6 +60,11 @@ expr    : expr PLUS expr   { $$ = new AddBinaryNode($1, $3);
 	| expr MOD expr    {  $$ = new ModBinaryNode($1, $3);
                               pool.add($$);
                            }
+	| expr MULT MULT expr {$$ = new MulBinaryNode($1, $4, true); 
+                             	pool.add($$);				
+				}
+	| MINUS expr	      { std::cout<<$$;
+				}
         | INT              { $$ = new IntLiteral($1);        
                              pool.add($$);
                            }

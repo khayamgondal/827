@@ -55,9 +55,17 @@ public:
 
 class MulBinaryNode : public BinaryNode {
 public:
-  MulBinaryNode(Node* left, Node* right) : BinaryNode(left, right) {}
+  MulBinaryNode(Node* left, Node* right) : BinaryNode(left, right) {
+	  isPow = false;
+  }
+  MulBinaryNode(Node* left, Node* right, bool isPow) : BinaryNode(left, right) {
+	  this->isPow = isPow;
+  }  
   virtual const Literal* eval() const;
+private:
+	bool isPow;
 };
+
 
 class DivBinaryNode : public BinaryNode {
 public:
@@ -77,3 +85,8 @@ public:
   virtual const Literal* eval() const;
 };
 
+class PowBinaryNode : public BinaryNode {
+public:
+  PowBinaryNode(Node* left, Node* right) : BinaryNode(left, right) { }
+  virtual const Literal* eval() const;
+};
