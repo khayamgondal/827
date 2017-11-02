@@ -1,13 +1,11 @@
 #include "vector2f.h"
 
-class Visitor;
-
 class Shape {
 public:
   Shape(float x, float y) : position(x, y) {}
   const Vector2f& getCoord() const;
   virtual void draw() const = 0;
-  virtual void accept(Visitor * const) = 0;
+  virtual void accept(class Visitor * const) = 0;
 private:
   Vector2f position;
 };
