@@ -17,7 +17,9 @@ AsgBinaryNode::AsgBinaryNode(Node* left, Node* right) :
   BinaryNode(left, right) { 
   const Literal* res = right->eval();
   const std::string n = static_cast<IdentNode*>(left)->getIdent();
+  //std::cout<<"setting "<<n<< " "; res->print();
   SymbolTable::getInstance().setValue(n, res);
+  //SymbolTable::getInstance().getValue(n)->print();
 }
 
 

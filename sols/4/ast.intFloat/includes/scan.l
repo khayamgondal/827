@@ -16,6 +16,9 @@ ident       {letter}({letter}|{digit})*
 "*"       { return MULT;  }
 "/"       { return DIV;   }
 "%"       { return MOD;   }
+"{"	      { return LPAR;  }
+"}"       { return RPAR;  }
+
 {digits}  { 
             yylval.intNumber = atoi(yytext);
             return INT; 

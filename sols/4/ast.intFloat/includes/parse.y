@@ -25,6 +25,7 @@ PoolOfNodes& pool = PoolOfNodes::getInstance();
 %left PLUS MINUS
 %left MOD
 %left MULT DIV
+%left LPAR RPAR
 
 %%
 lines   : lines expr CR
@@ -63,8 +64,22 @@ expr    : expr PLUS expr   { $$ = new AddBinaryNode($1, $3);
 	| expr MULT MULT expr {$$ = new MulBinaryNode($1, $4, true); 
                              	pool.add($$);				
 				}
-	| MINUS expr	      { std::cout<<$$;
+	| MINUS FLOAT	   { $$ = new FloatLiteral(-$2);      
+                             pool.add($$);
+			     }
+	| MINUS INT        { $$ = new IntLiteral(-$2);      
+                             pool.add($$);
 				}
+	| PLUS FLOAT	   { $$ = new FloatLiteral($2);      
+                             pool.add($$);
+			     }
+	| PLUS INT        { $$ = new IntLiteral($2);      
+                             pool.add($$);
+				}
+	| LPAR expr RPAR expr {  }
+	| expr PLUS EQ expr { $$ = new AddBinaryNode($1, $4); 
+                             pool.add($$);
+                           }
         | INT              { $$ = new IntLiteral($1);        
                              pool.add($$);
                            }
