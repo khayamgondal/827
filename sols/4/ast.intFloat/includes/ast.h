@@ -8,6 +8,7 @@
 #include <string>
 #include <map>
 #include "literal.h"
+#include "symbolTable.h"
 
 extern void yyerror(const char*);
 extern void yyerror(const char*, const char);
@@ -17,6 +18,7 @@ public:
   IdentNode(const std::string id) : Node(), ident(id) { } 
   virtual ~IdentNode() {}
   const std::string getIdent() const { return ident; }
+  const Literal* getValue() const { return SymbolTable::getInstance().getValue(ident); }
   virtual const Literal* eval() const;
 private:
   std::string ident;

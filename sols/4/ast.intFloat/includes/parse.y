@@ -77,8 +77,15 @@ expr    : expr PLUS expr   { $$ = new AddBinaryNode($1, $3);
                              pool.add($$);
 				}
 	| LPAR expr RPAR expr {  }
-	| expr PLUS EQ expr { $$ = new AddBinaryNode($1, $4); 
-                             pool.add($$);
+	| IDENT PLUS EQ expr { Node* lhs = new IdentNode($1); //get this ident value if any
+							const Node* val = SymbolTable::getInstance().getValue($1);
+							Node* sum = new AddBinaryNode($4, $4); 							
+       		 				$$ = new AsgBinaryNode(lhs, sum);
+            			//	pool.add(lhs);
+						//	pool.add(sum);
+            			//	pool.add($$);
+            				//delete [] $$;
+                            //delete [] sum;
                            }
         | INT              { $$ = new IntLiteral($1);        
                              pool.add($$);
@@ -86,7 +93,7 @@ expr    : expr PLUS expr   { $$ = new AddBinaryNode($1, $3);
         | FLOAT            { $$ = new FloatLiteral($1);      
                              pool.add($$);
                            }
-        | IDENT            { $$ = new IdentNode($1);         
+        | IDENT            { $$ = new IdentNode($1);        
                              delete [] $1;
                              pool.add($$);
                            }
