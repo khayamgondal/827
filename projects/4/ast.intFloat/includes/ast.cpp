@@ -38,7 +38,8 @@ const Literal* AddBinaryNode::eval() const {
   }
   const Literal* x = left->eval();
   const Literal* y = right->eval();
-  return (*x+*y);
+  //return (*x+*y);
+  return (*x).operator+(*y);
 }
 
 const Literal* SubBinaryNode::eval() const { 
