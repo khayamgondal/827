@@ -30,6 +30,7 @@ const Literal* AsgBinaryNode::eval() const {
   const Literal* res = right->eval();
 
   const std::string n = static_cast<IdentNode*>(left)->getIdent();
+  std::cout<<"setto"; res->eval()->print();
   SymbolTable::getInstance().setValue(n, res);
   return res;
 }
