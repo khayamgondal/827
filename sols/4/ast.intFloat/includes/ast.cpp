@@ -17,9 +17,7 @@ AsgBinaryNode::AsgBinaryNode(Node* left, Node* right) :
   BinaryNode(left, right) { 
   const Literal* res = right->eval();
   const std::string n = static_cast<IdentNode*>(left)->getIdent();
-  //std::cout<<"setting "<<n<< " "; res->print();
   SymbolTable::getInstance().setValue(n, res);
-  //SymbolTable::getInstance().getValue(n)->print();
 }
 
 
@@ -28,10 +26,10 @@ const Literal* AsgBinaryNode::eval() const {
     throw "error";
   }
   const Literal* res = right->eval();
-
-  const std::string n = static_cast<IdentNode*>(left)->getIdent();
-  std::cout<<"setto"; res->eval()->print();
-  SymbolTable::getInstance().setValue(n, res);
+  //std::cout<<"setto"; res->eval()->print();
+  //const std::string n = static_cast<IdentNode*>(left)->getIdent();
+  //std::cout<<"setto"; res->eval()->print();
+  //SymbolTable::getInstance().setValue(n, res);
   return res;
 }
 

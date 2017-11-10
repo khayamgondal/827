@@ -39,6 +39,54 @@ lines   : lines expr CR
             pool.add($$);
             delete [] $2;
           }
+		| lines expr PLUS EQ expr 
+		  {	Node* sum = new AddBinaryNode($2, $5);
+       	    $$ = new AsgBinaryNode($2, sum);
+            //delete[] $2;
+			//delete[] $5;
+			pool.add(sum);
+            pool.add($$);
+            }
+			| lines expr MINUS EQ expr 
+			  {	Node* sum = new SubBinaryNode($2, $5);
+	       	    $$ = new AsgBinaryNode($2, sum);
+	            //delete[] $2;
+				//delete[] $5;
+				pool.add(sum);
+	            pool.add($$);
+	            }
+				| lines expr MULT EQ expr 
+				  {	Node* sum = new MulBinaryNode($2, $5);
+		       	    $$ = new AsgBinaryNode($2, sum);
+		            //delete[] $2;
+					//delete[] $5;
+					pool.add(sum);
+		            pool.add($$);
+		            }
+					| lines expr DIV EQ expr 
+					  {	Node* sum = new DivBinaryNode($2, $5);
+			       	    $$ = new AsgBinaryNode($2, sum);
+			            //delete[] $2;
+						//delete[] $5;
+						pool.add(sum);
+			            pool.add($$);
+			            }
+						| lines expr MOD EQ expr 
+						  {	Node* sum = new ModBinaryNode($2, $5);
+				       	    $$ = new AsgBinaryNode($2, sum);
+				            //delete[] $2;
+							//delete[] $5;
+							pool.add(sum);
+				            pool.add($$);
+				            }
+							| lines expr DIV DIV EQ expr 
+							  {	Node* sum = new DivIntBinaryNode($2, $6);
+					       	    $$ = new AsgBinaryNode($2, sum);
+					            //delete[] $2;
+								//delete[] $5;
+								pool.add(sum);
+					            pool.add($$);
+					            }
         | lines CR
         | { ; }
         ;
@@ -77,14 +125,7 @@ expr    : expr PLUS expr   { $$ = new AddBinaryNode($1, $3);
                              pool.add($$);
 				}
 	| LPAR expr RPAR expr {  }
-	| expr PLUS EQ expr {			
-							Node* sum = new AddBinaryNode($1, $4);					
-       		 				$$ = new AsgBinaryNode($1, sum);
-            				//delete[] $1;
-							//delete[] $4;
-							pool.add(sum);
-            				pool.add($$);
-                           }
+
         | INT              { $$ = new IntLiteral($1);        
                              pool.add($$);
                            }
