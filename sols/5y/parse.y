@@ -8,14 +8,16 @@
 	extern char *yytext;
 	void yyerror (const char *);
 	PoolOfNodes& pool = PoolOfNodes::getInstance();
-
 %}
+
 %union {
   Node* node;
   int intNumber;
   float fltNumber;
-  char *id;
 }
+
+%token<intNumber> INT
+%token<fltNumber> FLOAT
 
 // 83 tokens, in alphabetical order:
 %token AMPEREQUAL AMPERSAND AND AS ASSERT AT BACKQUOTE BAR BREAK CIRCUMFLEX
@@ -27,11 +29,6 @@
 %token OR PASS PERCENT PERCENTEQUAL PLUS PLUSEQUAL PRINT RAISE RBRACE RETURN
 %token RIGHTSHIFT RIGHTSHIFTEQUAL RPAR RSQB SEMI SLASH SLASHEQUAL STAR STAREQUAL
 %token STRING TILDE TRY VBAREQUAL WHILE WITH YIELD
-
-%token CR
-%token<intNumber> INT
-%token<fltNumber> FLOAT
-%token<id> IDENT
 
 %start start
 
@@ -344,7 +341,7 @@ opt_AS_COMMA // Used in: except_clause
 	;
 suite // Used in: funcdef, if_stmt, star_ELIF, while_stmt, for_stmt, try_stmt, plus_except, opt_ELSE, opt_FINALLY, with_stmt, classdef
 	: simple_stmt
-	| NEWLINE INDENT plus_stmt DEDENT
+	| NEWLINE NAME plus_stmt DEDENT {std::cout<<$2;}
 	;
 plus_stmt // Used in: suite, plus_stmt
 	: plus_stmt stmt
@@ -629,6 +626,7 @@ star_DOT // Used in: pick_dotted_name, star_DOT
 	: star_DOT DOT
 	| %empty
 	;
+
 
 %%
 

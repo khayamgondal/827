@@ -4,7 +4,7 @@ YACC = bison
 CFLAGS = -g -std=c++11 -W -Wall -Weffc++ -Wextra -pedantic -O0
 LEXFLAGS = -Wno-unused -Wno-sign-compare -Wno-deprecated-register
 
-LEXDEBUG = 
+LEXDEBUG = -d
 # -v generates a file ending in .output
 # -t, together with defining YYDEBUG, makes bison write messages
 YACCDEBUG = -vtd

@@ -17,7 +17,8 @@ PoolOfNodes& pool = PoolOfNodes::getInstance();
   char *id;
 }
 
-%token CR EQ
+%token CR EQ DEF COLON INDENT DEDENT
+
 %token<intNumber> INT
 %token<fltNumber> FLOAT
 %token<id> IDENT
@@ -90,6 +91,10 @@ lines   : lines expr CR
         | lines CR
         | { ; }
         ;
+
+funcdef // Used in: decorated, compound_stmt
+	: DEF IDENT LPAR RPAR COLON CR
+	;
 
 expr    : expr PLUS expr   { $$ = new AddBinaryNode($1, $3); 
                              pool.add($$);

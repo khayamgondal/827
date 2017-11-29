@@ -29,15 +29,15 @@
  * Most of the definitions and specifications were taken from:
  * https://docs.python.org/2.7/reference/index.html
  */
-
-#include "ast.h"
+#include "includes/ast.h"
 #include "stdbool.h"
 #include "parse.tab.h"
-#include <iostream>
+
 
 /* Code to handle locations */
 /* This is taken from Chapter 8 - flex & bison by John Levine */
 int yycolumn = 1;
+
 #define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; \
     yylloc.first_column = yycolumn; yylloc.last_column = yycolumn+yyleng-1; \
     yycolumn += yyleng;
@@ -48,6 +48,7 @@ static const int FIRST_COLUMN = 1;    /* Start a line in column 1 (not 0) */
 
 /* We want to wrap the generated lexer with our own function */
 #define YY_DECL int orig_yylex(void)
+
 
 /* The scanner state: based roughly on the code in the CPython tokeniser */
 #define MAXINDENT 100   /* Max indentation level */
@@ -84,16 +85,8 @@ static int numbers = 0;
 
 %}
 
-
-
-
 %option yylineno
-
-letter      [a-zA-Z]
-digit       [0-9]
-digits      [0-9]+
-float       {digits}"."{digits}
-ident       {letter}({letter}|{digit})*
+%option noyywrap
 
 
 number    {integer}|{longinteger}|{floatnumber}|{imagnumber}
@@ -121,6 +114,7 @@ hexinteger     0[xX]{hexdigit}+
 octinteger     0[oO]{octdigit}+|0{octdigit}+
 bininteger     0[bB]{bindigit}+
 
+digit          [0-9]
 nonzero        [1-9]
 octdigit       [0-7]
 bindigit       [01]
@@ -278,26 +272,22 @@ comment   #.*
 "with"     { return WITH; }
 "yield"    { return YIELD; }
 
-
-
-{digits}  { 
-            yylval.intNumber = atoi(yytext);
+{integer} { 
+            yylval.intNumber = atoi(yytext); std::cout<<yytext;
             return INT; 
           }
-{float}   { 
+{floatnumber} { 
             yylval.fltNumber = atof(yytext);
             return FLOAT; 
           }
-{ident}   {
-            yylval.id = new char[yyleng+1];
-            strcpy(yylval.id, yytext);
-            return IDENT; 
-          }
-"\n"      { return CR;    }
-.         {}
+{number}   { ++numbers; return NUMBER; }
+{name}     { ++identifiers; yylval.id = new char[yyleng+1];
+            strcpy(yylval.id, yytext); return NAME; }
 
 <<EOF>>    { handle_eof(); return ENDMARKER; }
+
 <*>.       { display_error("unknown character"); }
+
 
 %%
 
@@ -468,8 +458,5 @@ int debug_yylex(void)
     }
     return token;
 }
-int yywrap() { 
-  yylex_destroy();
-  return 1; 
-}
+
 

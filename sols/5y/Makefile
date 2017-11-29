@@ -17,14 +17,14 @@ run: $(OBJS)
 main.o: main.cpp
 	$(CCC) $(CFLAGS) -c main.cpp
 
-parse.tab.c: includes/parse.y
-	$(YACC) $(YACCDEBUG) includes/parse.y
+parse.tab.c: parse.y
+	$(YACC) $(YACCDEBUG) parse.y
 
 parse.tab.o: parse.tab.c
 	$(CCC) $(CFLAGS) -c parse.tab.c
 
-lex.yy.c: includes/scan.l parse.tab.o
-	$(LEX) $(LEXDEBUG) includes/scan.l
+lex.yy.c: scan.l parse.tab.o
+	$(LEX) $(LEXDEBUG) scan.l
 
 lex.yy.o: lex.yy.c
 	$(CCC) $(CFLAGS) $(LEXFLAGS) -c lex.yy.c
@@ -42,3 +42,4 @@ poolOfNodes.o: includes/poolOfNodes.cpp includes/poolOfNodes.h \
 clean:
 	rm -f run *.o parse.tab.c lex.yy.c
 	rm -f parse.tab.h parse.output
+

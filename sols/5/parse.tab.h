@@ -47,92 +47,18 @@ extern int yydebug;
   {
     CR = 258,
     EQ = 259,
-    INT = 260,
-    FLOAT = 261,
-    IDENT = 262,
-    AMPEREQUAL = 263,
-    AMPERSAND = 264,
-    AND = 265,
-    AS = 266,
-    ASSERT = 267,
-    AT = 268,
-    BACKQUOTE = 269,
-    BAR = 270,
-    BREAK = 271,
-    CIRCUMFLEX = 272,
-    CIRCUMFLEXEQUAL = 273,
-    CLASS = 274,
-    COLON = 275,
-    COMMA = 276,
-    CONTINUE = 277,
-    DEDENT = 278,
-    DEF = 279,
-    DEL = 280,
-    DOT = 281,
-    DOUBLESLASH = 282,
-    DOUBLESLASHEQUAL = 283,
-    DOUBLESTAR = 284,
-    DOUBLESTAREQUAL = 285,
-    ELIF = 286,
-    ELSE = 287,
-    ENDMARKER = 288,
-    EQEQUAL = 289,
-    EQUAL = 290,
-    EXCEPT = 291,
-    EXEC = 292,
-    FINALLY = 293,
-    FOR = 294,
-    FROM = 295,
-    GLOBAL = 296,
-    GREATER = 297,
-    GREATEREQUAL = 298,
-    GRLT = 299,
-    IF = 300,
-    IMPORT = 301,
-    IN = 302,
-    INDENT = 303,
-    IS = 304,
-    LAMBDA = 305,
-    LBRACE = 306,
-    LEFTSHIFT = 307,
-    LEFTSHIFTEQUAL = 308,
-    LESS = 309,
-    LESSEQUAL = 310,
-    LPAR = 311,
-    LSQB = 312,
-    MINEQUAL = 313,
-    MINUS = 314,
-    NAME = 315,
-    NEWLINE = 316,
-    NOT = 317,
-    NOTEQUAL = 318,
-    NUMBER = 319,
-    OR = 320,
-    PASS = 321,
-    PERCENT = 322,
-    PERCENTEQUAL = 323,
-    PLUS = 324,
-    PLUSEQUAL = 325,
-    PRINT = 326,
-    RAISE = 327,
-    RBRACE = 328,
-    RETURN = 329,
-    RIGHTSHIFT = 330,
-    RIGHTSHIFTEQUAL = 331,
-    RPAR = 332,
-    RSQB = 333,
-    SEMI = 334,
-    SLASH = 335,
-    SLASHEQUAL = 336,
-    STAR = 337,
-    STAREQUAL = 338,
-    STRING = 339,
-    TILDE = 340,
-    TRY = 341,
-    VBAREQUAL = 342,
-    WHILE = 343,
-    WITH = 344,
-    YIELD = 345
+    DEF = 260,
+    COLON = 261,
+    INT = 262,
+    FLOAT = 263,
+    IDENT = 264,
+    PLUS = 265,
+    MINUS = 266,
+    MOD = 267,
+    MULT = 268,
+    DIV = 269,
+    LPAR = 270,
+    RPAR = 271
   };
 #endif
 
@@ -141,14 +67,14 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 13 "includes/parse.y" /* yacc.c:1915  */
+#line 13 "includes/parse.y" /* yacc.c:1909  */
 
   Node* node;
   int intNumber;
   float fltNumber;
   char *id;
 
-#line 152 "parse.tab.h" /* yacc.c:1915  */
+#line 78 "parse.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

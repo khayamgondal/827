@@ -275,15 +275,7 @@ comment   #.*
 
 {number}   { ++numbers; return NUMBER; }
 {name}     { ++identifiers; return NAME; }
-{integer}  { 
-            yylval.intNumber = atoi(yytext);
-            return INT; 
-          }
-{floatnumber}   { 
-           yylval.fltNumber = atof(yytext);
-           return FLOAT; 
-           }
-		   		  
+   		  
 <<EOF>>    { handle_eof(); return ENDMARKER; }
 
 <*>.       { display_error("unknown character"); }
