@@ -29,7 +29,6 @@
  * Most of the definitions and specifications were taken from:
  * https://docs.python.org/2.7/reference/index.html
  */
-#include "includes/ast.h"
 #include "stdbool.h"
 #include "parse.tab.h"
 
@@ -272,17 +271,8 @@ comment   #.*
 "with"     { return WITH; }
 "yield"    { return YIELD; }
 
-{integer} { 
-            yylval.intNumber = atoi(yytext); std::cout<<yytext;
-            return INT; 
-          }
-{floatnumber} { 
-            yylval.fltNumber = atof(yytext);
-            return FLOAT; 
-          }
 {number}   { ++numbers; return NUMBER; }
-{name}     { ++identifiers; yylval.id = new char[yyleng+1];
-            strcpy(yylval.id, yytext); return NAME; }
+{name}     { ++identifiers; return NAME; }
 
 <<EOF>>    { handle_eof(); return ENDMARKER; }
 
