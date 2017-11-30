@@ -19,7 +19,7 @@
 %token<intNumber> INT
 %token<fltNumber> FLOAT
 %token<id> NAME
-%type <node> atom funs
+%type <node> expr expr_stmt suite
 
 // 83 tokens, in alphabetical order:
 %token AMPEREQUAL AMPERSAND AND AS ASSERT AT BACKQUOTE BAR BREAK CIRCUMFLEX
@@ -37,7 +37,6 @@
 %locations
 
 %%
-
 start
 	: file_input
 	;
@@ -69,8 +68,7 @@ decorated // Used in: compound_stmt
 	| decorators funcdef
 	;
 funcdef // Used in: decorated, compound_stmt
-	: DEF NAME parameters COLON suite {
-	 }
+	: DEF NAME parameters COLON suite {std::cout<<"in def"; }
 	;
 parameters // Used in: funcdef
 	: LPAR varargslist RPAR
@@ -118,14 +116,14 @@ stmt // Used in: pick_NEWLINE_stmt, plus_stmt
 	;
 simple_stmt // Used in: stmt, suite
 	: small_stmt star_SEMI_small_stmt SEMI NEWLINE
-	| small_stmt star_SEMI_small_stmt NEWLINE 
+	| small_stmt star_SEMI_small_stmt NEWLINE
 	;
 star_SEMI_small_stmt // Used in: simple_stmt, star_SEMI_small_stmt
 	: star_SEMI_small_stmt SEMI small_stmt
 	| %empty
 	;
 small_stmt // Used in: simple_stmt, star_SEMI_small_stmt
-	: expr_stmt 
+	: expr_stmt
 	| print_stmt
 	| del_stmt
 	| pass_stmt
@@ -136,27 +134,21 @@ small_stmt // Used in: simple_stmt, star_SEMI_small_stmt
 	| assert_stmt
 	;
 expr_stmt // Used in: small_stmt
-	: testlist augassign pick_yield_expr_testlist 
-	
-	| funs
+	: testlist augassign pick_yield_expr_testlist
+	| testlist star_EQUAL
+	| expr_stmt PLUS expr_stmt {$$ = new AddBinaryNode($1, $3); 
+                          pool.add($$);  }
+	| expr_stmt EQUAL expr_stmt {$$ = new AsgBinaryNode($1, $3);
+						pool.add($$);
+						  			}
+	| expr
 	;
 pick_yield_expr_testlist // Used in: expr_stmt, star_EQUAL
 	: yield_expr
 	| testlist
 	;
-funs
-	: funs PLUS funs {$$ = new AddBinaryNode($1, $3); 
-                          pool.add($$);  }
-	| funs EQUAL funs {$$ = new AsgBinaryNode($1, $3);
-				pool.add($$);
-			}
-	| PRINT funs {$2->eval()->print();}
-	| funs {$1->eval()->print();}
-	| atom 
-	;
-
 star_EQUAL // Used in: expr_stmt, star_EQUAL
-	: star_EQUAL EQUAL pick_yield_expr_testlist {std::cout<<"exp state"; }
+	: star_EQUAL EQUAL pick_yield_expr_testlist
 	| %empty
 	;
 augassign // Used in: expr_stmt
@@ -174,7 +166,8 @@ augassign // Used in: expr_stmt
 	| DOUBLESLASHEQUAL
 	;
 print_stmt // Used in: small_stmt
-	: PRINT opt_test
+	: PRINT expr {$2->eval()->print();}
+	| PRINT opt_test
 	| PRINT RIGHTSHIFT test opt_test_2
 	;
 star_COMMA_test // Used in: star_COMMA_test, opt_test, listmaker, testlist_comp, testlist, pick_for_test
@@ -301,7 +294,7 @@ compound_stmt // Used in: stmt
 	;
 if_stmt // Used in: compound_stmt
 	: IF test COLON suite star_ELIF ELSE COLON suite
-	| IF test COLON suite star_ELIF {std::cout<<"if no else";}
+	| IF test COLON suite star_ELIF
 	;
 star_ELIF // Used in: if_stmt, star_ELIF
 	: star_ELIF ELIF test COLON suite
@@ -416,7 +409,14 @@ comp_op // Used in: comparison
 	| IS NOT
 	;
 expr // Used in: exec_stmt, with_item, comparison, expr, exprlist, star_COMMA_expr
-	: xor_expr
+	: NAME   { $$ = new IdentNode($1);         
+                   delete [] $1;
+                   pool.add($$); }
+	| FLOAT { $$ = new FloatLiteral($1);      
+                  pool.add($$);}
+	| INT {$$ = new IntLiteral($1);   
+               pool.add($$);}
+	| xor_expr
 	| expr BAR xor_expr
 	;
 xor_expr // Used in: expr, xor_expr
@@ -475,14 +475,8 @@ atom // Used in: power
 	| LSQB opt_listmaker RSQB
 	| LBRACE opt_dictorsetmaker RBRACE
 	| BACKQUOTE testlist1 BACKQUOTE
-	| NAME   { $$ = new IdentNode($1);         
-                   delete [] $1;
-                   pool.add($$); }
-	| NUMBER {  }
-	| FLOAT { $$ = new FloatLiteral($1);      
-                  pool.add($$);}
-	| INT {$$ = new IntLiteral($1);   
-               pool.add($$);}
+	| NAME
+	| NUMBER
 	| plus_STRING
 	;
 pick_yield_expr_testlist_comp // Used in: opt_yield_test
