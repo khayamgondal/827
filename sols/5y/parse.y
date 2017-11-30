@@ -6,6 +6,17 @@
 	void yyerror (const char *);
 %}
 
+%union {
+  Node* node;
+  int intNumber;
+  float fltNumber;
+  char *id;
+}
+
+%token<intNumber> INT
+%token<fltNumber> FLOAT
+%token<id> IDENT
+
 // 83 tokens, in alphabetical order:
 %token AMPEREQUAL AMPERSAND AND AS ASSERT AT BACKQUOTE BAR BREAK CIRCUMFLEX
 %token CIRCUMFLEXEQUAL CLASS COLON COMMA CONTINUE DEDENT DEF DEL DOT DOUBLESLASH
@@ -54,7 +65,8 @@ decorated // Used in: compound_stmt
 	| decorators funcdef
 	;
 funcdef // Used in: decorated, compound_stmt
-	: DEF NAME parameters COLON suite {std::cout<<"def "; }
+	: DEF NAME parameters COLON suite {
+	 }
 	;
 parameters // Used in: funcdef
 	: LPAR varargslist RPAR
@@ -102,14 +114,14 @@ stmt // Used in: pick_NEWLINE_stmt, plus_stmt
 	;
 simple_stmt // Used in: stmt, suite
 	: small_stmt star_SEMI_small_stmt SEMI NEWLINE
-	| small_stmt star_SEMI_small_stmt NEWLINE
+	| small_stmt star_SEMI_small_stmt NEWLINE 
 	;
 star_SEMI_small_stmt // Used in: simple_stmt, star_SEMI_small_stmt
 	: star_SEMI_small_stmt SEMI small_stmt
 	| %empty
 	;
 small_stmt // Used in: simple_stmt, star_SEMI_small_stmt
-	: expr_stmt
+	: expr_stmt 
 	| print_stmt
 	| del_stmt
 	| pass_stmt
@@ -120,7 +132,7 @@ small_stmt // Used in: simple_stmt, star_SEMI_small_stmt
 	| assert_stmt
 	;
 expr_stmt // Used in: small_stmt
-	: testlist augassign pick_yield_expr_testlist
+	: testlist augassign pick_yield_expr_testlist 
 	| testlist star_EQUAL
 	;
 pick_yield_expr_testlist // Used in: expr_stmt, star_EQUAL
@@ -128,7 +140,7 @@ pick_yield_expr_testlist // Used in: expr_stmt, star_EQUAL
 	| testlist
 	;
 star_EQUAL // Used in: expr_stmt, star_EQUAL
-	: star_EQUAL EQUAL pick_yield_expr_testlist
+	: star_EQUAL EQUAL pick_yield_expr_testlist {std::cout<<"exp state"; }
 	| %empty
 	;
 augassign // Used in: expr_stmt
@@ -447,8 +459,8 @@ atom // Used in: power
 	| LSQB opt_listmaker RSQB
 	| LBRACE opt_dictorsetmaker RBRACE
 	| BACKQUOTE testlist1 BACKQUOTE
-	| NAME
-	| NUMBER
+	| NAME   { std::cout<<$$; }
+	| NUMBER { std::cout<<$$; }
 	| plus_STRING
 	;
 pick_yield_expr_testlist_comp // Used in: opt_yield_test

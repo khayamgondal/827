@@ -37,6 +37,13 @@ protected:
   Node *right;
 };
 
+class FuncNode : public Node {
+public:
+	FuncNode(const std::string id, Node* stmts)
+		: Node() {}
+	
+};
+
 class AsgBinaryNode : public BinaryNode {
 public:
   AsgBinaryNode(Node* left, Node* right);
