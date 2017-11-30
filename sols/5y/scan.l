@@ -30,6 +30,7 @@
  * https://docs.python.org/2.7/reference/index.html
  */
 #include "stdbool.h"
+#include "includes/ast.h"
 #include "parse.tab.h"
 
 
@@ -271,8 +272,11 @@ comment   #.*
 "with"     { return WITH; }
 "yield"    { return YIELD; }
 
+{floatnumber} {++numbers; yylval.fltNumber = atof(yytext); return FLOAT; }
+{integer} {++numbers; yylval.intNumber = atoi(yytext); return INT; }
 {number}   { ++numbers; return NUMBER; }
-{name}     { ++identifiers; return NAME; }
+{name}     { ++identifiers; yylval.id = new char[yyleng+1];
+            strcpy(yylval.id, yytext); return NAME; }
 
 <<EOF>>    { handle_eof(); return ENDMARKER; }
 
