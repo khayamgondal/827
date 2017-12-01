@@ -19,8 +19,8 @@
 %token<intNumber> INT
 %token<fltNumber> FLOAT
 %token<id> NAME
-%type <node> expr expr_stmt suite
-
+%type <node> expr expr_stmt suite 
+%type <node> stmt plus_stmt
 // 83 tokens, in alphabetical order:
 %token AMPEREQUAL AMPERSAND AND AS ASSERT AT BACKQUOTE BAR BREAK CIRCUMFLEX
 %token CIRCUMFLEXEQUAL CLASS COLON COMMA CONTINUE DEDENT DEF DEL DOT DOUBLESLASH
@@ -68,7 +68,7 @@ decorated // Used in: compound_stmt
 	| decorators funcdef
 	;
 funcdef // Used in: decorated, compound_stmt
-	: DEF NAME parameters COLON suite {std::cout<<"in def"; }
+	: {std::cout<<"in def start"; } DEF NAME parameters COLON suite {std::cout<<"in def"; }
 	;
 parameters // Used in: funcdef
 	: LPAR varargslist RPAR
@@ -348,12 +348,12 @@ opt_AS_COMMA // Used in: except_clause
 	| %empty
 	;
 suite // Used in: funcdef, if_stmt, star_ELIF, while_stmt, for_stmt, try_stmt, plus_except, opt_ELSE, opt_FINALLY, with_stmt, classdef
-	: simple_stmt
-	| NEWLINE INDENT plus_stmt DEDENT
+	: simple_stmt {std::cout<<"in suite simple_stmt"; }
+| NEWLINE INDENT plus_stmt DEDENT { $3->eval()->print(); /*std::cout<<"in suite"; */}
 	;
 plus_stmt // Used in: suite, plus_stmt
-	: plus_stmt stmt
-	| stmt
+	: plus_stmt stmt { $$ = $2 ; std::cout<<"in plus_stmt stmt"; }
+	| stmt { $$=$1;  /*$1->eval()->print(); std::cout<<"in plus_stmt"; */} //return new stmt node. suite will add it to its
 	;
 testlist_safe // Used in: list_for
 	: old_test plus_COMMA_old_test opt_COMMA
