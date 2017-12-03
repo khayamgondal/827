@@ -6,9 +6,11 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include <map>
 #include "literal.h"
 #include "symbolTable.h"
+#include "tableManager.h"
 
 extern void yyerror(const char*);
 extern void yyerror(const char*, const char);
@@ -39,9 +41,13 @@ protected:
 
 class FuncNode : public Node {
 public:
-	FuncNode(const std::string id, Node* stmts)
-		: Node() {}
-	
+  FuncNode(const std::string id, Node* stmts) : Node(), id(id), stmts(stmts) {
+
+  }
+  virtual const Literal* eval() const;	
+protected:
+  std::string id;
+  Node *stmts;
 };
 
 class AsgBinaryNode : public BinaryNode {

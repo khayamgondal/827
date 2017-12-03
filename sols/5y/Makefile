@@ -9,7 +9,7 @@ LEXDEBUG =
 # -t, together with defining YYDEBUG, makes bison write messages
 YACCDEBUG = -vtd
 
-OBJS = main.o parse.tab.o lex.yy.o ast.o symbolTable.o poolOfNodes.o
+OBJS = main.o parse.tab.o lex.yy.o ast.o symbolTable.o poolOfNodes.o #tableManager.o
 
 run: $(OBJS)
 	$(CCC) $(CFLAGS) -o run $(OBJS)
@@ -31,6 +31,9 @@ lex.yy.o: lex.yy.c
 
 ast.o: includes/ast.cpp includes/ast.h includes/literal.h
 	$(CCC) $(CFLAGS) -c includes/ast.cpp
+
+#tableManager.o: includes/tableManager.cpp includes/tableManager.h
+#	$(CCC) $(CFLAGS) -c includes/tableManager.cpp
 
 symbolTable.o: includes/symbolTable.cpp includes/symbolTable.h
 	$(CCC) $(CFLAGS) -c includes/symbolTable.cpp

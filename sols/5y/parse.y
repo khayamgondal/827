@@ -2,6 +2,11 @@
 %{
 	#include <iostream>
 	#include "includes/ast.h"
+        #include <vector>
+
+        std::string funcName = "" ;
+        std::vector<Node*> stmtsTable ;
+
 	int yylex (void);
 	extern char *yytext;
 	void yyerror (const char *);
@@ -21,6 +26,7 @@
 %token<id> NAME
 %type <node> expr expr_stmt suite 
 %type <node> stmt plus_stmt
+
 // 83 tokens, in alphabetical order:
 %token AMPEREQUAL AMPERSAND AND AS ASSERT AT BACKQUOTE BAR BREAK CIRCUMFLEX
 %token CIRCUMFLEXEQUAL CLASS COLON COMMA CONTINUE DEDENT DEF DEL DOT DOUBLESLASH
@@ -55,6 +61,7 @@ decorator // Used in: decorators
 	: AT dotted_name LPAR opt_arglist RPAR NEWLINE
 	| AT dotted_name NEWLINE
 	;
+
 opt_arglist // Used in: decorator, trailer
 	: arglist
 	| %empty
@@ -67,9 +74,12 @@ decorated // Used in: compound_stmt
 	: decorators classdef
 	| decorators funcdef
 	;
+
 funcdef // Used in: decorated, compound_stmt
-	: {std::cout<<"in def start"; } DEF NAME parameters COLON suite {std::cout<<"in def"; }
+	:   DEF NAME {funcName = $2; stmtsTable.clear(); } parameters COLON suite {
+	     	}
 	;
+
 parameters // Used in: funcdef
 	: LPAR varargslist RPAR
 	| LPAR RPAR
@@ -139,8 +149,13 @@ expr_stmt // Used in: small_stmt
 	| expr_stmt PLUS expr_stmt {$$ = new AddBinaryNode($1, $3); 
                           pool.add($$);  }
 	| expr_stmt EQUAL expr_stmt {$$ = new AsgBinaryNode($1, $3);
-						pool.add($$);
-						  			}
+						pool.add($$); }
+	| expr_stmt LPAR RPAR {
+		for(std::vector<Node*>::iterator it = stmtsTable.begin();
+			 it != stmtsTable.end(); ++it) {
+    				(*it)->eval()->print();
+			}	 
+	}				  			
 	| expr
 	;
 pick_yield_expr_testlist // Used in: expr_stmt, star_EQUAL
@@ -166,7 +181,14 @@ augassign // Used in: expr_stmt
 	| DOUBLESLASHEQUAL
 	;
 print_stmt // Used in: small_stmt
-	: PRINT expr {$2->eval()->print();}
+	: PRINT expr {
+		if (funcName == "") {
+			$2->eval()->print();
+		}
+		else {
+			stmtsTable.push_back($2);
+		}
+	}
 	| PRINT opt_test
 	| PRINT RIGHTSHIFT test opt_test_2
 	;
@@ -352,8 +374,8 @@ suite // Used in: funcdef, if_stmt, star_ELIF, while_stmt, for_stmt, try_stmt, p
 | NEWLINE INDENT plus_stmt DEDENT { $3->eval()->print(); /*std::cout<<"in suite"; */}
 	;
 plus_stmt // Used in: suite, plus_stmt
-	: plus_stmt stmt { $$ = $2 ; std::cout<<"in plus_stmt stmt"; }
-	| stmt { $$=$1;  /*$1->eval()->print(); std::cout<<"in plus_stmt"; */} //return new stmt node. suite will add it to its
+	: plus_stmt stmt { stmtsTable.push_back($2); /*$$ = $2 ; std::cout<<"in plus_stmt stmt"; */}
+	| stmt { stmtsTable.push_back($1); /*$$=$1; */ /*$1->eval()->print(); std::cout<<"in plus_stmt"; */} //return new stmt node. suite will add it to its
 	;
 testlist_safe // Used in: list_for
 	: old_test plus_COMMA_old_test opt_COMMA
