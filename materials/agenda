@@ -1,3 +1,48 @@
+
+Thur, Nov 30:
+  -- Better to make Python oracle because we learn Python
+  -- Problems with ast.intFloat
+  -- Debugging: print vs gdb?
+  -- Using grammars: L-Systems and Fractals
+  -- Top-down parsing, but not table driven parsing
+  -- Exam #2:
+    -- visitor pattern -- double dispatch
+    -- OO framework
+    -- parse.y
+
+Tues, Nov 28:
+  -- Review specs for #5 & #6
+    -- Talk about specific requirements
+    -- Talk about nodes in the AST
+    -- Do recursion
+    -- Booleans (I made them ints)
+    -- Extend due date: Last day of class is Dec 8th.
+      -- Exam #2: Dec 5th
+      -- Proj #5: Dec 8th
+      -- Proj #6: Dec 13
+    -- STUDENT SHOULD DO IT THEIR WAY, not mine!
+  -- Review my test cases
+  -- Place 3 stmts and then eval. What is count?
+     Do more examples, i.e., a function and call
+
+Thur, Nov 16:
+  -- No class on Monday, Nov 21st
+  -- make up test cases and test with python
+     before testing with mypy
+  -- talk about global in a function
+  -- talk about recursion and functions
+     in static and dynamic languages
+
+Tues, Nov 14:
+  -- Talk ever so briefly about Toronto
+  -- Talk about handin
+  -- review my soln to Project #4
+  -- Talk about specs for Project #5
+  -- Review reverse iteration
+  -- talk about Python functions
+  -- talk about scope issues
+  -- Go through parse.y -- how to save stmt(s) 
+
 Thur, Nov 2:
   -- Get latest version of ast.intFloat:
      git log -1
