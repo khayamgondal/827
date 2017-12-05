@@ -3,9 +3,15 @@
 	#include <iostream>
 	#include "includes/ast.h"
         #include <vector>
+	#include <map>
+	#include "includes/tableManager.h"
 
         std::string funcName = "" ;
-        std::vector<Node*> stmtsTable ;
+        //std::vector<Node*> stmtsTable ;
+	std::vector <tableManager*> stmtsTable;
+
+        std::map<std::string, std::vector<tableManager*>> funMap;
+	//std::map<std::string, tableManager*> funMap;
 
 	int yylex (void);
 	extern char *yytext;
@@ -77,6 +83,9 @@ decorated // Used in: compound_stmt
 
 funcdef // Used in: decorated, compound_stmt
 	:   DEF NAME {funcName = $2; stmtsTable.clear(); } parameters COLON suite {
+			//tableManager* tM = new tableManager($2, stmtsTable);
+			funMap.insert(std::pair<std::string, std::vector<tableManager*>>($2, stmtsTable));
+			//funMap.insert(std::pair<std::string, tableManager*>($2, tM));
 	     	}
 	;
 
@@ -150,11 +159,18 @@ expr_stmt // Used in: small_stmt
                           pool.add($$);  }
 	| expr_stmt EQUAL expr_stmt {$$ = new AsgBinaryNode($1, $3);
 						pool.add($$); }
-	| expr_stmt LPAR RPAR {
-		for(std::vector<Node*>::iterator it = stmtsTable.begin();
-			 it != stmtsTable.end(); ++it) {
-    				(*it)->eval()->print();
-			}	 
+	| NAME LPAR RPAR {
+		std::map<std::string, std::vector<tableManager*>>::iterator mit = funMap.find($1);
+		if(mit != funMap.end()) {
+			std::vector<tableManager*> myNode = mit->second;
+			
+			for(std::vector<tableManager*>::iterator it = myNode.begin();
+				 it != myNode.end(); ++it) {
+	    				//(*it)->getStmt()->eval()->print();
+					if ((*it)->getType() == "print") 
+						(*it)->getStmt()->eval()->print();
+				}
+		}	 
 	}				  			
 	| expr
 	;
@@ -186,7 +202,7 @@ print_stmt // Used in: small_stmt
 			$2->eval()->print();
 		}
 		else {
-			stmtsTable.push_back($2);
+			stmtsTable.push_back(new tableManager( "print", $2));
 		}
 	}
 	| PRINT opt_test
@@ -371,11 +387,11 @@ opt_AS_COMMA // Used in: except_clause
 	;
 suite // Used in: funcdef, if_stmt, star_ELIF, while_stmt, for_stmt, try_stmt, plus_except, opt_ELSE, opt_FINALLY, with_stmt, classdef
 	: simple_stmt {std::cout<<"in suite simple_stmt"; }
-| NEWLINE INDENT plus_stmt DEDENT { $3->eval()->print(); /*std::cout<<"in suite"; */}
+| NEWLINE INDENT plus_stmt DEDENT { /*$3->eval()->print(); std::cout<<"in suite"; */}
 	;
 plus_stmt // Used in: suite, plus_stmt
-	: plus_stmt stmt { stmtsTable.push_back($2); /*$$ = $2 ; std::cout<<"in plus_stmt stmt"; */}
-	| stmt { stmtsTable.push_back($1); /*$$=$1; */ /*$1->eval()->print(); std::cout<<"in plus_stmt"; */} //return new stmt node. suite will add it to its
+	: plus_stmt stmt { stmtsTable.push_back(new tableManager("sdsd", $2)); /*$$ = $2 ; std::cout<<"in plus_stmt stmt"; */}
+	| stmt { stmtsTable.push_back(new tableManager("sdsd", $1)); /*$$=$1; */ /*$1->eval()->print(); std::cout<<"in plus_stmt"; */} //return new stmt node. suite will add it to its
 	;
 testlist_safe // Used in: list_for
 	: old_test plus_COMMA_old_test opt_COMMA

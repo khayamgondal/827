@@ -2,9 +2,10 @@
 #include "tableManager.h"
 #include "node.h"
 
-tableManager::tableManager(std::string id, Node* stmts), id(id), stmts(stmts) {
-}
-void tableManager::pushStmt(Node* stmt) {
-  stmts.push_back(stmt);
-}
 
+const std::string tableManager::getType() {
+  return type;
+}
+const Node* tableManager::getStmt() {
+  return stmt;
+}

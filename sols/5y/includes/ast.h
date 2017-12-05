@@ -10,7 +10,6 @@
 #include <map>
 #include "literal.h"
 #include "symbolTable.h"
-#include "tableManager.h"
 
 extern void yyerror(const char*);
 extern void yyerror(const char*, const char);
@@ -39,7 +38,7 @@ protected:
   Node *right;
 };
 
-class FuncNode : public Node {
+/*class FuncNode : public Node {
 public:
   FuncNode(const std::string id, Node* stmts) : Node(), id(id), stmts(stmts) {
 
@@ -49,7 +48,7 @@ protected:
   std::string id;
   Node *stmts;
 };
-
+*/
 class AsgBinaryNode : public BinaryNode {
 public:
   AsgBinaryNode(Node* left, Node* right);

@@ -5,10 +5,11 @@
 class tableManager {
   
  public:
-  tableManager();
-  void pushFunc(std::string& id, const Node* stmt);
-
+  tableManager(std::string type, Node* stmt): type(type), stmt(stmt) {
+}
+  const std::string getType();
+  const Node* getStmt(); 
  private:
-   std::string id;
-   std::vector<Node*> stmts;
+   std::string type;
+   Node* stmt;
 };
