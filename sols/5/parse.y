@@ -340,7 +340,7 @@ compound_stmt // Used in: stmt
 	| decorated
 	;
 if_stmt // Used in: compound_stmt
-	: IF suite COLON suite {std::cout<<"if"; }
+	: IF expr_stmt COLON suite {std::cout<<"if"; }
 //	| IF expr COLON suite ELSE COLON suite 
 //	|  IF test COLON suite star_ELIF ELSE COLON suite {std::cout<<"in if else"; }
 //	| IF test COLON suite star_ELIF {std::cout<<"in if"; }
