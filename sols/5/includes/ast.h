@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include <map>
 #include "literal.h"
 #include "symbolTable.h"
@@ -37,6 +38,17 @@ protected:
   Node *right;
 };
 
+/*class FuncNode : public Node {
+public:
+  FuncNode(const std::string id, Node* stmts) : Node(), id(id), stmts(stmts) {
+
+  }
+  virtual const Literal* eval() const;	
+protected:
+  std::string id;
+  Node *stmts;
+};
+*/
 class AsgBinaryNode : public BinaryNode {
 public:
   AsgBinaryNode(Node* left, Node* right);
@@ -68,6 +80,12 @@ private:
 	bool isPow;
 };
 
+
+class EqequalBinaryNode : public BinaryNode {
+public:
+	EqequalBinaryNode(Node* left, Node* right) : BinaryNode(left, right) {}
+	virtual const Literal* eval() const;
+};
 
 class DivBinaryNode : public BinaryNode {
 public:

@@ -32,7 +32,14 @@ const Literal* AsgBinaryNode::eval() const {
   //SymbolTable::getInstance().setValue(n, res);
   return res;
 }
-
+const Literal* EqequalBinaryNode::eval() const { 
+  if (!left || !right) {
+    throw "error";
+  }
+  const Literal* y = right->eval();
+  const Literal* x = left->eval();
+  return (*x)==(*y);
+}
 const Literal* AddBinaryNode::eval() const { 
   if (!left || !right) {
     throw "error";
