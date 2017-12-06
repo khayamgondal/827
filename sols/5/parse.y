@@ -12,7 +12,8 @@
 
         std::map<std::string, std::vector<tableManager*>> funMap;
 	//std::map<std::string, tableManager*> funMap;
-
+	bool isIf = 0;
+	
 	int yylex (void);
 	extern char *yytext;
 	void yyerror (const char *);
@@ -30,7 +31,8 @@
 %token<intNumber> INT
 %token<fltNumber> FLOAT
 %token<id> NAME
-%type <node> expr expr_stmt suite 
+%type <node> expr expr_stmt 
+%type <std::vector <tableManager*>> suite  
 %type <node> stmt plus_stmt
 
 // 83 tokens, in alphabetical order:
@@ -83,7 +85,7 @@ decorated // Used in: compound_stmt
 
 funcdef // Used in: decorated, compound_stmt
 	:   DEF NAME {
-			funcName = $2; stmtsTable.clear(); 
+			funcName = $2; //stmtsTable.clear(); 
 			} parameters COLON suite {
 				funMap.insert(std::pair<std::string, std::vector<tableManager*>>($2, stmtsTable));
 		}
@@ -340,7 +342,10 @@ compound_stmt // Used in: stmt
 	| decorated
 	;
 if_stmt // Used in: compound_stmt
-	: IF expr_stmt COLON suite {std::cout<<"if"; }
+	: IF expr_stmt {
+		//IntLiteral* intLiteral = static_cast <IntLiteral*> ($2->eval());
+		float intVal = $2->eval()->getVal(); std::cout<<intVal;	isIf = (int )intVal;	
+		 } COLON suite {std::cout<<"if"; }
 //	| IF expr COLON suite ELSE COLON suite 
 //	|  IF test COLON suite star_ELIF ELSE COLON suite {std::cout<<"in if else"; }
 //	| IF test COLON suite star_ELIF {std::cout<<"in if"; }
@@ -398,11 +403,14 @@ opt_AS_COMMA // Used in: except_clause
 	;
 suite // Used in: funcdef, if_stmt, star_ELIF, while_stmt, for_stmt, try_stmt, plus_except, opt_ELSE, opt_FINALLY, with_stmt, classdef
 	: simple_stmt {std::cout<<"in suite simple_stmt"; }
-	| NEWLINE INDENT plus_stmt DEDENT {
+	| { stmtsTable.clear(); } NEWLINE INDENT plus_stmt DEDENT {
+		//$$ = stmtsTable; 
 		//stmtsTable.push_back(new tableManager("sdsd", $3));
+		
 	 }
 	;
-plus_stmt // Used in: suite, plus_stmt
+plus_stmt // Used in: suite, plus_stmt 
+	
 	: plus_stmt stmt { 
 		//stmtsTable.push_back(new tableManager("sdsd", $2)); 
 		}
