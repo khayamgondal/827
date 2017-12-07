@@ -1,6 +1,8 @@
 #include "node.h"
 #include "poolOfNodes.h"
 #include <math.h> 
+
+
 class Literal : public Node {
 public:
   virtual ~Literal() {}
@@ -44,9 +46,6 @@ public:
   //virtual const Literal* opPow(int) const =0;
   // 
 
-  virtual float getVal() const {
-  }
-
   virtual const Literal* eval() const = 0;
   virtual void print() const { 
     std::cout << "No Way" << std::endl; 
@@ -57,7 +56,7 @@ class FloatLiteral: public Literal {
 public:
   FloatLiteral(float _val): val(_val) {}
 
-  virtual float getVal() { return val;}
+  float getVal() { return val;}
   virtual const Literal* operator+(const Literal& rhs) const  {
     return rhs.opPlus(val);
   }
@@ -230,7 +229,7 @@ class IntLiteral: public Literal {
 public:
  IntLiteral(int _val): val(_val) {}
  
- virtual float getVal() { return float(val);}
+ int getVal() { return val;}
 
   virtual const Literal* operator+(const Literal& rhs) const  {
     return rhs.opPlus(val);

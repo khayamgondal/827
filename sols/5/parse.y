@@ -12,7 +12,7 @@
 
         std::map<std::string, std::vector<tableManager*>> funMap;
 	//std::map<std::string, tableManager*> funMap;
-	bool isIf = 0;
+	bool isTrue = true;
 	
 	int yylex (void);
 	extern char *yytext;
@@ -85,7 +85,8 @@ decorated // Used in: compound_stmt
 
 funcdef // Used in: decorated, compound_stmt
 	:   DEF NAME {
-			funcName = $2; //stmtsTable.clear(); 
+			funcName = $2; 
+			stmtsTable.clear(); 
 			} parameters COLON suite {
 				funMap.insert(std::pair<std::string, std::vector<tableManager*>>($2, stmtsTable));
 		}
@@ -158,18 +159,23 @@ expr_stmt // Used in: small_stmt
 	: testlist augassign pick_yield_expr_testlist
 	| testlist star_EQUAL
 	| expr_stmt PLUS expr_stmt {
-								$$ = new AddBinaryNode($1, $3); 
-								stmtsTable.push_back(new tableManager("add", $$));
-                         	   	pool.add($$); 
-								 }
+					if (isTrue) $$ = new AddBinaryNode($1, $3); 
+					if (isTrue) stmtsTable.push_back(new tableManager("add", $$));
+                         	   	if (isTrue) pool.add($$); 
+					 }
 	| expr_stmt EQUAL expr_stmt {
-								$$ = new AsgBinaryNode($1, $3);
-								stmtsTable.push_back(new tableManager("asg", $$));
-								pool.add($$); 
-							}
+					if (isTrue) $$ = new AsgBinaryNode($1, $3);
+					if (isTrue) stmtsTable.push_back(new tableManager("asg", $$));
+					if (isTrue) pool.add($$); 
+					}
 	
 	| expr_stmt EQEQUAL expr_stmt { $$ = new EqequalBinaryNode($1, $3); 
-							} 
+					IntLiteral* intLiteral = dynamic_cast<IntLiteral*>(const_cast<Literal*>($$->eval()));
+					int intVal = intLiteral->getVal(); 
+					if (intVal == 1) isTrue = true; else isTrue = false;
+					//stmtsTable.push_back(new tableManager(std::to_string(intVal), $$));
+					pool.add($$);
+					} 
 							
 	| NAME LPAR RPAR 		{
 		std::map<std::string, std::vector<tableManager*>>::iterator mit = funMap.find($1);
@@ -213,7 +219,7 @@ print_stmt // Used in: small_stmt
 			$2->eval()->print();
 		}
 		else {
-			stmtsTable.push_back(new tableManager( "print", $2));
+			if (isTrue) stmtsTable.push_back(new tableManager( "print", $2));
 		}
 	}
 	| PRINT opt_test
@@ -343,9 +349,11 @@ compound_stmt // Used in: stmt
 	;
 if_stmt // Used in: compound_stmt
 	: IF expr_stmt {
-		//IntLiteral* intLiteral = static_cast <IntLiteral*> ($2->eval());
-		float intVal = $2->eval()->getVal(); std::cout<<intVal;	isIf = (int )intVal;	
-		 } COLON suite {std::cout<<"if"; }
+		//$2->eval()->print();
+		//const IntLiteral *intLiteral = const_cast <const IntLiteral*> ($2->eval());
+		//IntLiteral* intLiteral = dynamic_cast<IntLiteral*>(const_cast<Literal*>($2->eval()));
+		//int intVal = intLiteral->getVal(); std::cout<<intVal;	
+		 } COLON suite {isTrue = true;}
 //	| IF expr COLON suite ELSE COLON suite 
 //	|  IF test COLON suite star_ELIF ELSE COLON suite {std::cout<<"in if else"; }
 //	| IF test COLON suite star_ELIF {std::cout<<"in if"; }
@@ -403,7 +411,7 @@ opt_AS_COMMA // Used in: except_clause
 	;
 suite // Used in: funcdef, if_stmt, star_ELIF, while_stmt, for_stmt, try_stmt, plus_except, opt_ELSE, opt_FINALLY, with_stmt, classdef
 	: simple_stmt {std::cout<<"in suite simple_stmt"; }
-	| { stmtsTable.clear(); } NEWLINE INDENT plus_stmt DEDENT {
+	|  NEWLINE INDENT plus_stmt DEDENT {
 		//$$ = stmtsTable; 
 		//stmtsTable.push_back(new tableManager("sdsd", $3));
 		

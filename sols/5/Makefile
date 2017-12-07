@@ -29,7 +29,7 @@ lex.yy.c: scan.l parse.tab.o
 lex.yy.o: lex.yy.c
 	$(CCC) $(CFLAGS) $(LEXFLAGS) -c lex.yy.c
 
-ast.o: includes/ast.cpp includes/ast.h includes/literal.h
+ast.o: includes/ast.cpp includes/ast.h includes/literal.h 
 	$(CCC) $(CFLAGS) -c includes/ast.cpp
 
 tableManager.o: includes/tableManager.cpp includes/tableManager.h
