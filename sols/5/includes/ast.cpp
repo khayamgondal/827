@@ -38,7 +38,10 @@ const Literal* EqequalBinaryNode::eval() const {
   }
   const Literal* y = right->eval();
   const Literal* x = left->eval();
-  return (*x)==(*y);
+  if (type == 0)
+  	return (*x)==(*y);
+  else if (type ==1)
+	return (*x)!=(*y);
 }
 const Literal* AddBinaryNode::eval() const { 
   if (!left || !right) {

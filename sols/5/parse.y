@@ -86,8 +86,8 @@ funcdef // Used in: decorated, compound_stmt
 	:   DEF NAME {
 			funcName = $2; 
 			stmtsTable.clear();
-			bool isTrue = true;
-			bool returned = false; 
+			isTrue = true;
+			returned = false; 
 			} parameters COLON suite {
 				funMap.insert(std::pair<std::string, std::vector<tableManager*>>($2, stmtsTable));
 				funcName = "";
@@ -187,13 +187,15 @@ expr_stmt // Used in: small_stmt
 					 pool.add($$); }
 					}
 	
-	| expr_stmt EQEQUAL expr_stmt { $$ = new EqequalBinaryNode($1, $3); 
+	| expr_stmt EQEQUAL expr_stmt { $$ = new EqequalBinaryNode($1, $3, 0); 
 					//IntLiteral* intLiteral = dynamic_cast<IntLiteral*>(const_cast<Literal*>($$->eval()));
 					//int intVal = intLiteral->getVal(); 
 					//if (intVal == 1) isTrue = true; else isTrue = false;
 					//stmtsTable.push_back(new tableManager(std::to_string(intVal), $$));
 					pool.add($$);
 					} 
+	| expr_stmt NOTEQUAL expr_stmt {$$ = new EqequalBinaryNode($1, $3, 1);	pool.add($$);
+					}
 							
 	| NAME LPAR RPAR 		{
 		std::map<std::string, std::vector<tableManager*>>::iterator mit = funMap.find($1);
@@ -367,8 +369,14 @@ compound_stmt // Used in: stmt
 	;
 if_stmt // Used in: compound_stmt
 	: IF expr_stmt {
+			int intVal;
 			IntLiteral* intLiteral = dynamic_cast<IntLiteral*>(const_cast<Literal*>($2->eval()));
-			int intVal = intLiteral->getVal(); 
+			if (intLiteral != NULL)
+				intVal= intLiteral->getVal(); 
+			else {
+				FloatLiteral* floatLiteral = dynamic_cast<FloatLiteral*>(const_cast<Literal*>($2->eval()));
+				intVal= int(floatLiteral->getVal());
+				}
 			if (intVal == 1) isTrue = true; else isTrue = false;
 		} COLON suite
 	| IF expr_stmt  {

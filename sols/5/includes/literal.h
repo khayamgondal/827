@@ -12,8 +12,11 @@ public:
   virtual const Literal* opPlus(int) const =0;
 
   virtual const Literal* operator==(const Literal& rhs) const = 0;
-  virtual const Literal* opComp(float) const =0;
-  virtual const Literal* opComp(int) const =0;
+  virtual const Literal* opComp(float, int) const =0;
+  virtual const Literal* opComp(int, int) const =0;
+
+  virtual const Literal* operator!=(const Literal& rhs) const = 0;
+
 
   virtual const Literal* operator*(const Literal& rhs) const =0;
   virtual const Literal* opMult(float) const =0;
@@ -72,10 +75,15 @@ public:
   }
 
   virtual const Literal* operator== (const Literal& rhs) const {
-	  return rhs.opComp(val);
+	  return rhs.opComp(val, 0);
   }
-  virtual const Literal* opComp(float lhs) const  {
-	bool result = lhs == val;
+  virtual const Literal* operator!= (const Literal& rhs) const {
+	  return rhs.opComp(val, 1);
+  }
+  virtual const Literal* opComp(float lhs, int type) const  {
+	bool result ;
+	if (type==0) result = (lhs == val);
+	if (type==1) result = (lhs != val);
 	const Literal* node ;
 	if (result) 
     	node = new FloatLiteral(1);
@@ -85,8 +93,10 @@ public:
     PoolOfNodes::getInstance().add(node);
     return node;
   }
-  virtual const Literal* opComp(int lhs) const  {
-  	bool result = lhs == val;
+  virtual const Literal* opComp(int lhs, int type) const  {
+	bool result ;
+	if (type==0) result = (lhs == val);
+	if (type==1) result = (lhs != val);
   	const Literal* node ;
   	if (result) 
       	node = new FloatLiteral(1);
@@ -246,21 +256,29 @@ public:
   }
 
   virtual const Literal* operator== (const Literal& rhs) const {
-	  return rhs.opComp(val);
+	  return rhs.opComp(val, 0);
   }
-  virtual const Literal* opComp(float lhs) const  {
-	bool result = lhs == val;
+  virtual const Literal* operator!= (const Literal& rhs) const {
+	  return rhs.opComp(val, 1);
+  }
+
+  virtual const Literal* opComp(float lhs, int type) const  {
+	bool result ;
+	if (type==0) result = (lhs == val);
+	if (type==1) result = (lhs != val);
 	const Literal* node ;
 	if (result) 
-    	node = new FloatLiteral(1);
+    	node = new IntLiteral(1);
 	else     	
-		node = new FloatLiteral(0);
+		node = new IntLiteral(0);
 
     PoolOfNodes::getInstance().add(node);
     return node;
   }
-  virtual const Literal* opComp(int lhs) const  {
-  	bool result = lhs == val;
+  virtual const Literal* opComp(int lhs, int type) const  {
+	bool result ;
+	if (type==0) result = (lhs == val);
+	if (type==1) result = (lhs != val);
   	const Literal* node ;
   	if (result) 
       	node = new IntLiteral(1);

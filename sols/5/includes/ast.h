@@ -83,8 +83,12 @@ private:
 
 class EqequalBinaryNode : public BinaryNode {
 public:
-	EqequalBinaryNode(Node* left, Node* right) : BinaryNode(left, right) {}
+	EqequalBinaryNode(Node* left, Node* right) : BinaryNode(left, right), type(0) {}
+	EqequalBinaryNode(Node* left, Node* right, int type) : BinaryNode(left, right), type(type) {}
 	virtual const Literal* eval() const;
+
+private:
+ 	int type;
 };
 
 class DivBinaryNode : public BinaryNode {
