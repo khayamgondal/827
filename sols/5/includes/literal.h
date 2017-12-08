@@ -16,6 +16,10 @@ public:
   virtual const Literal* opComp(int, int) const =0;
 
   virtual const Literal* operator!=(const Literal& rhs) const = 0;
+  virtual const Literal* operator<(const Literal& rhs) const = 0;
+  virtual const Literal* operator<=(const Literal& rhs) const = 0;
+  virtual const Literal* operator>(const Literal& rhs) const = 0;
+  virtual const Literal* operator>=(const Literal& rhs) const = 0;
 
 
   virtual const Literal* operator*(const Literal& rhs) const =0;
@@ -80,6 +84,19 @@ public:
   virtual const Literal* operator!= (const Literal& rhs) const {
 	  return rhs.opComp(val, 1);
   }
+  virtual const Literal* operator> (const Literal& rhs) const {
+	  return rhs.opComp(val, 2);
+  }
+  virtual const Literal* operator>= (const Literal& rhs) const {
+	  return rhs.opComp(val, 3);
+  }
+  virtual const Literal* operator< (const Literal& rhs) const {
+	  return rhs.opComp(val, 4);
+  }
+  virtual const Literal* operator<= (const Literal& rhs) const {
+	  return rhs.opComp(val, 5);
+  }
+  
   virtual const Literal* opComp(float lhs, int type) const  {
 	bool result ;
 	if (type==0) result = (lhs == val);
@@ -261,11 +278,27 @@ public:
   virtual const Literal* operator!= (const Literal& rhs) const {
 	  return rhs.opComp(val, 1);
   }
-
+  virtual const Literal* operator> (const Literal& rhs) const {
+	  return rhs.opComp(val, 2);
+  }
+  virtual const Literal* operator>= (const Literal& rhs) const {
+	  return rhs.opComp(val, 3);
+  }
+  virtual const Literal* operator< (const Literal& rhs) const {
+	  return rhs.opComp(val, 4);
+  }
+  virtual const Literal* operator<= (const Literal& rhs) const {
+	  return rhs.opComp(val, 5);
+  }
   virtual const Literal* opComp(float lhs, int type) const  {
 	bool result ;
 	if (type==0) result = (lhs == val);
 	if (type==1) result = (lhs != val);
+	if (type==2) result = (lhs < val);
+	if (type==3) result = (lhs <= val);
+	if (type==4) result = (lhs > val);
+	if (type==5) result = (lhs >= val);
+	
 	const Literal* node ;
 	if (result) 
     	node = new IntLiteral(1);
@@ -279,6 +312,10 @@ public:
 	bool result ;
 	if (type==0) result = (lhs == val);
 	if (type==1) result = (lhs != val);
+	if (type==2) result = (lhs < val);
+	if (type==3) result = (lhs <= val);
+	if (type==4) result = (lhs > val);
+	if (type==5) result = (lhs >= val);
   	const Literal* node ;
   	if (result) 
       	node = new IntLiteral(1);

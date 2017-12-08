@@ -2,17 +2,25 @@
 %{
 	#include <iostream>
 	#include "includes/ast.h"
-        #include <vector>
+    #include <vector>
+	#include <stack>
+	#include <list>
 	#include <map>
 	#include "includes/tableManager.h"
-
-        std::string funcName = "" ;
+	#include "includes/scopeManager.h"
+	
+    std::string funcName = "" ;
 	std::vector <tableManager*> stmtsTable;
-
-        std::map<std::string, std::vector<tableManager*>> funMap;
+	//std::list<std::vector <tableManager*>> stmtsTableList;
+	
+    std::map<std::string, std::vector<tableManager*>> funMap;
+	
+	
 	bool isTrue = true;
 	bool returned = false;
-	
+	std::stack<ScopeManager*> scopeManager;
+	ScopeManager* currentScope;
+
 	int yylex (void);
 	extern char *yytext;
 	void yyerror (const char *);
@@ -82,17 +90,6 @@ decorated // Used in: compound_stmt
 	| decorators funcdef
 	;
 
-funcdef // Used in: decorated, compound_stmt
-	:   DEF NAME {
-			funcName = $2; 
-			stmtsTable.clear();
-			isTrue = true;
-			returned = false; 
-			} parameters COLON suite {
-				funMap.insert(std::pair<std::string, std::vector<tableManager*>>($2, stmtsTable));
-				funcName = "";
-		}
-	;
 
 parameters // Used in: funcdef
 	: LPAR varargslist RPAR
@@ -157,6 +154,19 @@ small_stmt // Used in: simple_stmt, star_SEMI_small_stmt
 	| exec_stmt
 	| assert_stmt
 	;
+
+	funcdef // Used in: decorated, compound_stmt
+		:   DEF NAME {
+				funcName = $2; 
+				stmtsTable.clear();
+				isTrue = true;
+				returned = false; 
+				} parameters COLON suite {
+					funMap.insert(std::pair<std::string, std::vector<tableManager*>>($2, stmtsTable));
+					//funcName = "";
+			}
+		;
+		
 expr_stmt // Used in: small_stmt
 	: testlist augassign pick_yield_expr_testlist
 	| testlist star_EQUAL
@@ -187,16 +197,13 @@ expr_stmt // Used in: small_stmt
 					 pool.add($$); }
 					}
 	
-	| expr_stmt EQEQUAL expr_stmt { $$ = new EqequalBinaryNode($1, $3, 0); 
-					//IntLiteral* intLiteral = dynamic_cast<IntLiteral*>(const_cast<Literal*>($$->eval()));
-					//int intVal = intLiteral->getVal(); 
-					//if (intVal == 1) isTrue = true; else isTrue = false;
-					//stmtsTable.push_back(new tableManager(std::to_string(intVal), $$));
-					pool.add($$);
-					} 
-	| expr_stmt NOTEQUAL expr_stmt {$$ = new EqequalBinaryNode($1, $3, 1);	pool.add($$);
-					}
-							
+	| expr_stmt EQEQUAL expr_stmt { $$ = new EqequalBinaryNode($1, $3, 0); 		pool.add($$);	} 
+	| expr_stmt NOTEQUAL expr_stmt {$$ = new EqequalBinaryNode($1, $3, 1);	pool.add($$);	}
+	| expr_stmt LESS expr_stmt {$$ = new EqequalBinaryNode($1, $3, 2);	pool.add($$); }				
+	| expr_stmt LESSEQUAL expr_stmt {$$ = new EqequalBinaryNode($1, $3, 3);	pool.add($$); }
+	| expr_stmt GREATER expr_stmt {$$ = new EqequalBinaryNode($1, $3, 4);	pool.add($$); }		
+	| expr_stmt GREATEREQUAL expr_stmt {$$ = new EqequalBinaryNode($1, $3, 5);	pool.add($$); }		
+																							
 	| NAME LPAR RPAR 		{
 		std::map<std::string, std::vector<tableManager*>>::iterator mit = funMap.find($1);
 		if(mit != funMap.end()) {
@@ -443,6 +450,7 @@ suite // Used in: funcdef, if_stmt, star_ELIF, while_stmt, for_stmt, try_stmt, p
 	|  NEWLINE INDENT plus_stmt DEDENT { /*returned = false;*/
 		//$$ = stmtsTable; 
 		//stmtsTable.push_back(new tableManager("sdsd", $3));
+		//funMap.insert(std::pair<std::string, std::vector<tableManager*>>(funcName, stmtsTable));
 		
 	 }
 	;
