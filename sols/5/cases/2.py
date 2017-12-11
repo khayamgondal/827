@@ -1,3 +1,4 @@
+x = 10
 def k():
   print x
   if x < 1:
@@ -5,6 +6,6 @@ def k():
   x = x-1
   k()
 
-x = 10
+
 k()
 

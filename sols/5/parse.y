@@ -149,9 +149,10 @@ expr_stmt // Used in: small_stmt
 	: testlist augassign pick_yield_expr_testlist //{std::cout<<"exp state"; }
 	| testlist star_EQUAL // {std::cout<<"exp state 2"; }
 	| testlist EQUAL pick_yield_expr_testlist  {$$ = new AsgBinaryNode($1, $3); //$$->eval()->print();
-						Scope::scope.at(currentIndex)->stmts.push_back($$);						
+					Scope::scope.at(currentIndex)->stmts.push_back($$);			
+					if (currentIndex == 0) $$->eval();								
 						//std::cout<<"may be equal";
-						}
+					}
 	;
 pick_yield_expr_testlist // Used in: expr_stmt, star_EQUAL
 	: yield_expr
@@ -182,6 +183,7 @@ augassign // Used in: expr_stmt
 print_stmt // Used in: small_stmt
 	: PRINT opt_test { $$ = new PrintBinaryNode($2, NULL); Scope::scope.at(currentIndex)->stmts.push_back($$) ; 
 	//	std::cout<<"PRINT opt_test"; 
+	if (currentIndex == 0) $$->eval()->print();
 		}
 	| PRINT RIGHTSHIFT test opt_test_2
 	;
@@ -452,14 +454,15 @@ pick_LEFTSHIFT_RIGHTSHIFT // Used in: shift_expr
 arith_expr // Used in: shift_expr, arith_expr
 	: term {$$=$1; }
 	| arith_expr pick_PLUS_MINUS term {  
-		if ($2 == 1) { $$ = new AddBinaryNode($1, $3); Scope::scope.at(currentIndex)->stmts.push_back($$); }
-		if ($2 ==2) {$$ = new SubBinaryNode($1, $3); Scope::scope.at(currentIndex)->stmts.push_back($$); }
+		if ($2 == 1) { $$ = new AddBinaryNode($1, $3); Scope::scope.at(currentIndex)->stmts.push_back($$); 		if (currentIndex == 0) $$->eval();}
+		if ($2 ==2) {$$ = new SubBinaryNode($1, $3); Scope::scope.at(currentIndex)->stmts.push_back($$); 		if (currentIndex == 0) $$->eval();}
+	//	if ($2 ==3) {$$ = new AsgBinaryNode($1, $3); Scope::scope.at(currentIndex)->stmts.push_back($$); 		if (currentIndex == 0) $$->eval();}
                  }
 	;
 pick_PLUS_MINUS // Used in: arith_expr
 	: PLUS {$$ = 1; }
 	| MINUS {$$ = 2; }
-	//| EQUAL {std::cout<<"FUCKING EWUSL"; }
+	//| EQUAL {$$ = 3; std::cout<<"FUCKING EWUSL"; }
 	;
 term // Used in: arith_expr, term
 	: factor {$$=$1;   /* std::cout<<"factor\n";*/}

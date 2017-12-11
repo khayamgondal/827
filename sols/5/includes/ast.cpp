@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <iomanip>
+#include <algorithm>  
 #include "ast.h"
 #include "symbolTable.h"
 #include "externs.h"
@@ -17,14 +18,63 @@ const Literal* IdentNode::eval() const {
   return val;
 }
 
+void evalScope(std::vector<StmtsStruct*> s, std::vector<Node*> stmts, int currentLevel) {
+	for (auto *curStmt : stmts) {
+		FuncNode *funcNode = dynamic_cast<FuncNode*> (curStmt) ; 
+	        if (funcNode != NULL) { // try to find def in level + 1 OR size to 0
+				for (int i = std::min(((int)(s.size()))-1, currentLevel) ; i >= 0 ; i--) {
+				    if (s.at(i)->name == funcNode->getId()) { //we found the signature 
+				      evalScope(s, s.at(i)->stmts, currentLevel++);
+				      return;
+			            }
+				}
+			}
+			CompBinaryNode *compNode = dynamic_cast<CompBinaryNode*> (curStmt) ; 
+			if (compNode != NULL) { //compNode->eval()->print(); 
+		           lastFlag = (static_cast<FloatLiteral*> (const_cast<Literal*> ( compNode->eval() ) )->getVal() ); 
+			   ifFlag = lastFlag; 	// std::cout<<lastFlag<<std::endl; 			std::cout<<"IS"<<std::endl;
+			}
+
+			IfEndNode *ifEndNode = dynamic_cast<IfEndNode*> (curStmt);
+			if(ifEndNode != NULL) { ifFlag = lastFlag;  //std::cout<<"IE"<<std::endl;
+				}
+
+			ElseStartNode *elseStartNode = dynamic_cast<ElseStartNode*> (curStmt);
+			if(elseStartNode != NULL) { if (lastFlag ==1) ifFlag = 0; else ifFlag = 1; //std::cout<<"ES"<<std::endl; 
+			}
+
+			ElseEndNode *elseEndNode = dynamic_cast<ElseEndNode*> (curStmt);
+			if(elseEndNode != NULL) { ifFlag = 1;  //std::cout<<"EE"<<std::endl;
+			}
+	
+			AsgBinaryNode *asgBinaryNode = dynamic_cast<AsgBinaryNode*> (curStmt);
+			if(asgBinaryNode != NULL) { curStmt->eval();	}
+
+			AddBinaryNode *addBinaryNode = dynamic_cast<AddBinaryNode*> (curStmt);
+			if(addBinaryNode != NULL) { curStmt->eval();	}
+
+			//else curStmt->eval();
+	
+
+			if (ifFlag == 1) {
+				RetBinaryNode *retNode = dynamic_cast<RetBinaryNode*> (curStmt) ; 
+				if (retNode != NULL) return;
+
+				PrintBinaryNode *printNode = dynamic_cast<PrintBinaryNode*> (curStmt) ; 
+				if (printNode != NULL ) curStmt->eval()->print();
+	
+			}
+	}
+}
+
 void evalStmts(std::vector<StmtsStruct*> s, std::vector<Node*> stmts) {
  // if (lookupIndex < stmts.size()-1) 
-  lookupIndex ++;
+  lookupIndex ++; std::cout<<"CURRENT index "<<lookupIndex<<std::endl;
   //std::cout<<lookupIndex<<std::endl;
     for (auto *curStmt : stmts) {
 	FuncNode *funcNode = dynamic_cast<FuncNode*> (curStmt) ; 
         if (funcNode != NULL) 
-	  for (int i = lookupIndex ; i >= 0 ; i--) { //std::cout<<s.at(i)->name<<"LOOKING FOR "<<funcNode->getId()<<std::endl;
+	  for (int i = lookupIndex ; i >= 0 ; i--) { std::cout<<s.at(i)->name<<" LOOKING FOR "<<funcNode->getId()<<std::endl;
 	    if (s.at(i)->name == funcNode->getId()) { //we found the signature 
 	      evalStmts(s, s.at(i)->stmts);
 	      return;
@@ -48,11 +98,11 @@ void evalStmts(std::vector<StmtsStruct*> s, std::vector<Node*> stmts) {
 	if(elseEndNode != NULL) { ifFlag = 1;  //std::cout<<"EE"<<std::endl;
 	}
 	
-	/*AsgBinaryNode *asgBinaryNode = dynamic_cast<AsgBinaryNode*> (curStmt);
+	AsgBinaryNode *asgBinaryNode = dynamic_cast<AsgBinaryNode*> (curStmt);
 	if(asgBinaryNode != NULL) { curStmt->eval();	}
 
 	AddBinaryNode *addBinaryNode = dynamic_cast<AddBinaryNode*> (curStmt);
-	if(addBinaryNode != NULL) { curStmt->eval();	}*/
+	if(addBinaryNode != NULL) { curStmt->eval();	}
 
 	//else curStmt->eval();
 	
@@ -71,14 +121,23 @@ void evalStmts(std::vector<StmtsStruct*> s, std::vector<Node*> stmts) {
 
 void Scope::eval() {
   lookupIndex = 0;
-  evalStmts(scope, scope.at(0)->stmts);
+  //evalStmts(scope, scope.at(0)->stmts);
+for (auto *curStmt : scope.at(0)->stmts) {
+	FuncNode *funcNode = dynamic_cast<FuncNode*> (curStmt) ; 
+        if (funcNode != NULL) { // try to find def in level + 1 OR size to 0
+			for (int i = std::min(((int)(scope.size()))-1, 1) ; i >= 0 ; i--) {
+			    if (scope.at(i)->name == funcNode->getId()) { //we found the signature 
+			      evalScope(scope, scope.at(i)->stmts, 2);
+			      return;
+		            }
+			}
+		}
+	}
 }
 
 AsgBinaryNode::AsgBinaryNode(Node* left, Node* right) : 
   BinaryNode(left, right) { 
-  const Literal* res = right->eval();
-  const std::string n = static_cast<IdentNode*>(left)->getIdent();
-  SymbolTable::getInstance().setValue(n, res);
+
 }
 
 const Literal* FuncNode::eval() const {
@@ -100,15 +159,11 @@ const Literal* RetBinaryNode::eval() const {
 }
 
 const Literal* AsgBinaryNode::eval() const { 
-  if (!left || !right) {
-    throw "error";
-  }
-  const Literal* res = right->eval();
-  //std::cout<<"setto"; res->eval()->print();
-  //const std::string n = static_cast<IdentNode*>(left)->getIdent();
-  //std::cout<<"setto"; res->eval()->print();
-  //SymbolTable::getInstance().setValue(n, res);
-  return res;
+    const Literal* res = right->eval();
+    const std::string n = static_cast<IdentNode*>(left)->getIdent();
+    SymbolTable::getInstance().setValue(n, res);
+    //std::cout<< n << " ASS " ; res->eval()->print();
+	//SymbolTable::getInstance().getValue(n)->eval()->print();
 }
 
 const Literal* PrintBinaryNode::eval() const { 
