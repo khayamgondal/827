@@ -17,7 +17,7 @@ const Literal* IdentNode::eval() const {
 
 void evalStmts(std::vector<StmtsStruct*> s, std::vector<Node*> stmts) {
   lookupIndex ++;
-    for (auto *curStmt : stmts) { 
+    for (auto *curStmt : stmts) {
 	FuncNode *funcNode = dynamic_cast<FuncNode*> (curStmt) ; 
         if (funcNode != NULL) 
 	  for (int i = lookupIndex ; i >= 0 ; i--) { //std::cout<<s.at(i)->name<<"LOOKING FOR "<<funcNode->getId()<<std::endl;
@@ -34,6 +34,8 @@ void evalStmts(std::vector<StmtsStruct*> s, std::vector<Node*> stmts) {
 
 	PrintBinaryNode *printNode = dynamic_cast<PrintBinaryNode*> (curStmt) ; 
 	if (printNode != NULL ) curStmt->eval()->print();
+	
+	//else curStmt->eval();
     }
 
 }

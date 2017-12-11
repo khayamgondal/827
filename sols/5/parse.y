@@ -12,6 +12,8 @@
 	void yyerror (const char *);
   	int currentIndex = 0;
 	int lookUpIndex =  1 ; 
+
+
 %}
 
 %union {
@@ -20,7 +22,7 @@
   char *id;
   int simType;
 }
-
+%define parse.error verbose
 // 83 tokens, in alphabetical order:
 %token AMPEREQUAL AMPERSAND AND AS ASSERT AT BACKQUOTE BAR BREAK CIRCUMFLEX
 %token CIRCUMFLEXEQUAL CLASS COLON COMMA CONTINUE DEDENT DEF DEL DOT DOUBLESLASH
@@ -144,20 +146,25 @@ small_stmt // Used in: simple_stmt, star_SEMI_small_stmt
 	| assert_stmt
 	;
 expr_stmt // Used in: small_stmt
-	: testlist augassign pick_yield_expr_testlist {std::cout<<"exp state"; }
-	//| testlist star_EQUAL {std::cout<<"exp state 2"; }
+	: testlist augassign pick_yield_expr_testlist //{std::cout<<"exp state"; }
+	| testlist star_EQUAL // {std::cout<<"exp state 2"; }
 	| testlist EQUAL pick_yield_expr_testlist  {$$ = new AsgBinaryNode($1, $3); 
 						Scope::scope.at(currentIndex)->stmts.push_back($$);						
-						std::cout<<"may be equal";}
+						//std::cout<<"may be equal";
+						}
 	;
 pick_yield_expr_testlist // Used in: expr_stmt, star_EQUAL
 	: yield_expr
 	| testlist {$$ = $1; }
 	;
-/*star_EQUAL // Used in: expr_stmt, star_EQUAL
-	: star_EQUAL EQUAL pick_yield_expr_testlist {$3->eval()->print(); std::cout<<"may be equal";}
-	| %empty
-	;*/
+
+
+
+star_EQUAL // Used in: expr_stmt, star_EQUAL
+	:  %empty
+	;
+
+
 augassign // Used in: expr_stmt
 	: PLUSEQUAL
 	| MINEQUAL
@@ -173,8 +180,9 @@ augassign // Used in: expr_stmt
 	| DOUBLESLASHEQUAL
 	;
 print_stmt // Used in: small_stmt
-	: PRINT opt_test { $$ = new PrintBinaryNode($2, NULL); Scope::scope.at(currentIndex)->stmts.push_back($$) ;
-		std::cout<<"PRINT opt_test"; }
+	: PRINT opt_test { $$ = new PrintBinaryNode($2, NULL); Scope::scope.at(currentIndex)->stmts.push_back($$) ; 
+	//	std::cout<<"PRINT opt_test"; 
+		}
 	| PRINT RIGHTSHIFT test opt_test_2
 	;
 star_COMMA_test // Used in: star_COMMA_test, opt_test, listmaker, testlist_comp, testlist, pick_for_test
@@ -182,7 +190,8 @@ star_COMMA_test // Used in: star_COMMA_test, opt_test, listmaker, testlist_comp,
 	| %empty
 	;
 opt_test // Used in: print_stmt
-	: test star_COMMA_test opt_COMMA {$$=$1; std::cout<<"test star_COMMA_test opt_COMMA\n"; }
+	: test star_COMMA_test opt_COMMA { $$=$1; //std::cout<<"test star_COMMA_test opt_COMMA\n"; 
+			}
 	| %empty
 	;
 plus_COMMA_test // Used in: plus_COMMA_test, opt_test_2
@@ -379,33 +388,33 @@ old_lambdef // Used in: old_test
 	| LAMBDA COLON old_test
 	;
 test // Used in: opt_EQUAL_test, print_stmt, star_COMMA_test, opt_test, plus_COMMA_test, raise_stmt, opt_COMMA_test, opt_test_3, exec_stmt, assert_stmt, if_stmt, star_ELIF, while_stmt, with_item, except_clause, opt_AS_COMMA, opt_IF_ELSE, listmaker, testlist_comp, lambdef, subscript, opt_test_only, sliceop, testlist, dictorsetmaker, star_test_COLON_test, opt_DOUBLESTAR_test, pick_argument, argument, testlist1
-	: or_test opt_IF_ELSE {$$=$1; std::cout<<"or_test\n";}
+	: or_test opt_IF_ELSE {$$=$1; /*std::cout<<"or_test\n";*/}
 	| lambdef 
 	;
 
 opt_IF_ELSE // Used in: test
-	: IF or_test ELSE test {std::cout << "IF or_test ELSE test"; }
+	: IF or_test ELSE test /*{std::cout << "IF or_test ELSE test"; }*/
 	| %empty
 	;
 or_test // Used in: old_test, test, opt_IF_ELSE, or_test, comp_for
-	: and_test {$$=$1; std::cout<<"and test\n";}
+	: and_test {$$=$1; /*std::cout<<"and test\n";*/}
 	| or_test OR and_test
 	;
 and_test // Used in: or_test, and_test
-	: not_test {$$=$1; std::cout<<"not test\n";}
+	: not_test {$$=$1; /*std::cout<<"not test\n";*/}
 	| and_test AND not_test
 	;
 not_test // Used in: and_test, not_test
 	: NOT not_test
-	| comparison {$$=$1; std::cout<<"comparison\n";}
+	| comparison {$$=$1; /*std::cout<<"comparison\n";*/}
 	;
 comparison // Used in: not_test, comparison
-	: expr {$$=$1; std::cout<<"expr\n";}
-	| comparison comp_op expr {$$ = new CompBinaryNode($1, $3, $2); Scope::scope.at(currentIndex)->stmts.push_back($$) ;
+	: expr {$$=$1;}
+	| comparison comp_op expr {$$ = new CompBinaryNode($1, $3, $2); Scope::scope.at(currentIndex)->stmts.push_back($$) ; 
 			} // as not doing elif so safe to use this as if statement
 	;
 comp_op // Used in: comparison
-	: LESS { $$ = 4; std::cout<<"LESS"; }
+	: LESS { $$ = 4; /*std::cout<<"LESS"; */}
 	| GREATER
 	| EQEQUAL
 	| GREATEREQUAL
@@ -418,31 +427,32 @@ comp_op // Used in: comparison
 	| IS NOT
 	;
 expr // Used in: exec_stmt, with_item, comparison, expr, exprlist, star_COMMA_expr
-	: xor_expr {$$=$1; std::cout<<"xor_expr\n";}
+	: xor_expr {$$=$1; /*std::cout<<"xor_expr\n";*/}
 	| expr BAR xor_expr
 	;
 xor_expr // Used in: expr, xor_expr
-	: and_expr {$$=$1; std::cout<<"and_expr\n";}
+	: and_expr {$$=$1; /*std::cout<<"and_expr\n";*/}
 	| xor_expr CIRCUMFLEX and_expr
 	;
 and_expr // Used in: xor_expr, and_expr
-	: shift_expr {$$=$1; std::cout<<"shift_expr\n";}
+	: shift_expr {$$=$1; /*std::cout<<"shift_expr\n";*/}
 	| and_expr AMPERSAND shift_expr
 	;
 shift_expr // Used in: and_expr, shift_expr
-	: arith_expr {$$=$1; std::cout<<"arith_expr\n";}
+	: arith_expr {$$=$1; /*std::cout<<"arith_expr\n";*/ }
 	| shift_expr pick_LEFTSHIFT_RIGHTSHIFT arith_expr
 	;
 pick_LEFTSHIFT_RIGHTSHIFT // Used in: shift_expr
 	: LEFTSHIFT
 	| RIGHTSHIFT
 	;
+
 arith_expr // Used in: shift_expr, arith_expr
-	: term {$$=$1; std::cout<<"term\n";}
+	: term {$$=$1; }
 	| arith_expr pick_PLUS_MINUS term {  
 		if ($2 == 1) { $$ = new AddBinaryNode($1, $3); Scope::scope.at(currentIndex)->stmts.push_back($$); }
-		if ($2 ==21) {$$ = new SubBinaryNode($1, $3); Scope::scope.at(currentIndex)->stmts.push_back($$); }
-                std::cout<<"arithi\n"; }
+		if ($2 ==2) {$$ = new SubBinaryNode($1, $3); Scope::scope.at(currentIndex)->stmts.push_back($$); }
+                 }
 	;
 pick_PLUS_MINUS // Used in: arith_expr
 	: PLUS {$$ = 1; }
@@ -450,7 +460,7 @@ pick_PLUS_MINUS // Used in: arith_expr
 	//| EQUAL {std::cout<<"FUCKING EWUSL"; }
 	;
 term // Used in: arith_expr, term
-	: factor {$$=$1; std::cout<<"factor\n";}
+	: factor {$$=$1;   /* std::cout<<"factor\n";*/}
 	| term pick_multop factor
 	;
 pick_multop // Used in: term
@@ -461,7 +471,7 @@ pick_multop // Used in: term
 	;
 factor // Used in: term, factor, power
 	: pick_unop factor
-	| power {$$=$1; std::cout<<"power\n";} 
+	| power {$$=$1; /*std::cout<<"power\n"; */} 
 	;
 pick_unop // Used in: factor
 	: PLUS
@@ -474,17 +484,19 @@ power // Used in: factor
 		if ($2 == 1) { 
 			Node* node = new FuncNode(dynamic_cast<IdentNode*>$1->getIdent(), NULL, false); 
 			Scope::scope.at(currentIndex)->stmts.push_back(node) ;
-			 std::cout<<"CURRENT INDEX............. " << currentIndex <<std::endl;
+			// std::cout<<"CURRENT INDEX............. " << currentIndex <<std::endl;
+			// std::cout<<"FINNNNNNNNNE";
 			if (currentIndex == 0) { //start eval. start from cur scope and look all the way up
+				//std::cout<<"START EVAL\n";
 				Scope s;
 				s.eval();		
 			} 
 		}else $$=$1;   
-	std::cout<<"atom star_trailer\n";
+	//std::cout<<"atom star_trailer\n";
 	} 
 	;
 star_trailer // Used in: power, star_trailer
-	: star_trailer trailer { $$ = 1; std::cout<<"star_trailer trailer \n";} 
+	: star_trailer trailer { $$ = 1; /*std::cout<<"star_trailer trailer \n";*/} 
 	| %empty { $$ = 0;  } // hack to check if fun call or not
 	;
 atom // Used in: power
@@ -492,8 +504,8 @@ atom // Used in: power
 	| LSQB opt_listmaker RSQB
 	| LBRACE opt_dictorsetmaker RBRACE
 	| BACKQUOTE testlist1 BACKQUOTE
-	| NAME {$$ = new IdentNode($1); Scope::scope.at(currentIndex)->stmts.push_back($$) ; std::cout<<"name\n"; }
-	| NUMBER {$$ = new FloatLiteral($1); Scope::scope.at(currentIndex)->stmts.push_back($$) ;std::cout<<"number\n";}
+	| NAME {$$ = new IdentNode($1); Scope::scope.at(currentIndex)->stmts.push_back($$) ;}
+	| NUMBER {$$ = new FloatLiteral($1); Scope::scope.at(currentIndex)->stmts.push_back($$) ;}
 	| plus_STRING
 	;
 pick_yield_expr_testlist_comp // Used in: opt_yield_test
@@ -568,7 +580,7 @@ star_COMMA_expr // Used in: exprlist, star_COMMA_expr
 	;
 testlist // Used in: expr_stmt, pick_yield_expr_testlist, return_stmt, for_stmt, opt_testlist, yield_expr
 	: test star_COMMA_test COMMA
-	| test star_COMMA_test {$$ = $1; std::cout<<"Testtt\n"; }
+	| test star_COMMA_test {$$ = $1; }
 	;
 dictorsetmaker // Used in: opt_dictorsetmaker
 	: test COLON test pick_for_test_test
@@ -669,5 +681,6 @@ void yyerror (const char *s)
 	                                     yylloc.last_line,  yylloc.last_column);
     }
     fprintf(stderr, " %s with [%s]\n", s, yytext);
+
 }
 
