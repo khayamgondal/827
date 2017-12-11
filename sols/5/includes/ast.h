@@ -59,6 +59,12 @@ public:
   virtual const Literal* eval() const;
 };
 
+class PrintBinaryNode : public BinaryNode {
+  public:
+  PrintBinaryNode(Node* left, Node* right): BinaryNode(left, right) { }
+  virtual const Literal* eval() const;
+};
+
 class AddBinaryNode : public BinaryNode {
 public:
   AddBinaryNode(Node* left, Node* right) : BinaryNode(left, right) { }
@@ -85,14 +91,20 @@ private:
 };
 
 
-class EqequalBinaryNode : public BinaryNode {
+class CompBinaryNode : public BinaryNode {
 public:
-	EqequalBinaryNode(Node* left, Node* right) : BinaryNode(left, right), type(0) {}
-	EqequalBinaryNode(Node* left, Node* right, int type) : BinaryNode(left, right), type(type) {}
+	CompBinaryNode(Node* left, Node* right) : BinaryNode(left, right), type(0) {}
+	CompBinaryNode(Node* left, Node* right, int type) : BinaryNode(left, right), type(type) {}
 	virtual const Literal* eval() const;
 
 private:
  	int type;
+};
+
+class RetBinaryNode : public BinaryNode {
+public:
+  RetBinaryNode() : BinaryNode(NULL, NULL) { }
+  virtual const Literal* eval() const;
 };
 
 class DivBinaryNode : public BinaryNode {

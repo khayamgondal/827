@@ -101,6 +101,10 @@ public:
 	bool result ;
 	if (type==0) result = (lhs == val);
 	if (type==1) result = (lhs != val);
+	if (type==2) result = (lhs < val);
+	if (type==3) result = (lhs <= val);
+	if (type==4) result = (lhs > val);
+	if (type==5) result = (lhs >= val);
 	const Literal* node ;
 	if (result) 
     	node = new FloatLiteral(1);
@@ -114,6 +118,10 @@ public:
 	bool result ;
 	if (type==0) result = (lhs == val);
 	if (type==1) result = (lhs != val);
+	if (type==2) result = (lhs < val);
+	if (type==3) result = (lhs <= val);
+	if (type==4) result = (lhs > val);
+	if (type==5) result = (lhs >= val);
   	const Literal* node ;
   	if (result) 
       	node = new FloatLiteral(1);

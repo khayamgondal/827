@@ -34,9 +34,9 @@
 
 %type<id> NAME
 %type<fltNumber> NUMBER
-%type <node> atom opt_test test or_test and_test not_test comparison expr xor_expr and_expr shift_expr arith_expr term factor power
+%type <node> atom opt_test test testlist or_test and_test not_test comparison expr xor_expr and_expr shift_expr arith_expr term factor power pick_yield_expr_testlist expr_stmt print_stmt
 
-%type<simType> star_trailer
+%type<simType> star_trailer comp_op pick_PLUS_MINUS
 
 %debug 
 
@@ -89,7 +89,7 @@ varargslist // Used in: parameters, old_lambdef, lambdef
 	| star_fpdef_COMMA fpdef opt_EQUAL_test opt_COMMA
 	;
 opt_EQUAL_test // Used in: varargslist, star_fpdef_COMMA
-	: EQUAL test
+	: EQUAL test {std::cout<<"EQUAL TEST";}
 	| %empty
 	;
 star_fpdef_COMMA // Used in: varargslist, star_fpdef_COMMA
@@ -144,17 +144,20 @@ small_stmt // Used in: simple_stmt, star_SEMI_small_stmt
 	| assert_stmt
 	;
 expr_stmt // Used in: small_stmt
-	: testlist augassign pick_yield_expr_testlist
-	| testlist star_EQUAL
+	: testlist augassign pick_yield_expr_testlist {std::cout<<"exp state"; }
+	//| testlist star_EQUAL {std::cout<<"exp state 2"; }
+	| testlist EQUAL pick_yield_expr_testlist  {$$ = new AsgBinaryNode($1, $3); 
+						Scope::scope.at(currentIndex)->stmts.push_back($$);						
+						std::cout<<"may be equal";}
 	;
 pick_yield_expr_testlist // Used in: expr_stmt, star_EQUAL
 	: yield_expr
-	| testlist
+	| testlist {$$ = $1; }
 	;
-star_EQUAL // Used in: expr_stmt, star_EQUAL
-	: star_EQUAL EQUAL pick_yield_expr_testlist
+/*star_EQUAL // Used in: expr_stmt, star_EQUAL
+	: star_EQUAL EQUAL pick_yield_expr_testlist {$3->eval()->print(); std::cout<<"may be equal";}
 	| %empty
-	;
+	;*/
 augassign // Used in: expr_stmt
 	: PLUSEQUAL
 	| MINEQUAL
@@ -170,8 +173,8 @@ augassign // Used in: expr_stmt
 	| DOUBLESLASHEQUAL
 	;
 print_stmt // Used in: small_stmt
-	: PRINT opt_test { Scope::scope.at(currentIndex)->stmts.push_back($2) ;
-		std::cout<<"PRINT opt_test";}
+	: PRINT opt_test { $$ = new PrintBinaryNode($2, NULL); Scope::scope.at(currentIndex)->stmts.push_back($$) ;
+		std::cout<<"PRINT opt_test"; }
 	| PRINT RIGHTSHIFT test opt_test_2
 	;
 star_COMMA_test // Used in: star_COMMA_test, opt_test, listmaker, testlist_comp, testlist, pick_for_test
@@ -211,7 +214,7 @@ continue_stmt // Used in: flow_stmt
 	;
 return_stmt // Used in: flow_stmt
 	: RETURN testlist
-	| RETURN
+	| RETURN {Scope::scope.at(currentIndex)->stmts.push_back(new RetBinaryNode());}
 	;
 yield_stmt // Used in: flow_stmt
 	: yield_expr
@@ -381,7 +384,7 @@ test // Used in: opt_EQUAL_test, print_stmt, star_COMMA_test, opt_test, plus_COM
 	;
 
 opt_IF_ELSE // Used in: test
-	: IF or_test ELSE test
+	: IF or_test ELSE test {std::cout << "IF or_test ELSE test"; }
 	| %empty
 	;
 or_test // Used in: old_test, test, opt_IF_ELSE, or_test, comp_for
@@ -398,10 +401,11 @@ not_test // Used in: and_test, not_test
 	;
 comparison // Used in: not_test, comparison
 	: expr {$$=$1; std::cout<<"expr\n";}
-	| comparison comp_op expr
+	| comparison comp_op expr {$$ = new CompBinaryNode($1, $3, $2); Scope::scope.at(currentIndex)->stmts.push_back($$) ;
+			} // as not doing elif so safe to use this as if statement
 	;
 comp_op // Used in: comparison
-	: LESS
+	: LESS { $$ = 4; std::cout<<"LESS"; }
 	| GREATER
 	| EQEQUAL
 	| GREATEREQUAL
@@ -435,11 +439,15 @@ pick_LEFTSHIFT_RIGHTSHIFT // Used in: shift_expr
 	;
 arith_expr // Used in: shift_expr, arith_expr
 	: term {$$=$1; std::cout<<"term\n";}
-	| arith_expr pick_PLUS_MINUS term// {std::cout<<"arithi\n"; }
+	| arith_expr pick_PLUS_MINUS term {  
+		if ($2 == 1) { $$ = new AddBinaryNode($1, $3); Scope::scope.at(currentIndex)->stmts.push_back($$); }
+		if ($2 ==21) {$$ = new SubBinaryNode($1, $3); Scope::scope.at(currentIndex)->stmts.push_back($$); }
+                std::cout<<"arithi\n"; }
 	;
 pick_PLUS_MINUS // Used in: arith_expr
-	: PLUS
-	| MINUS
+	: PLUS {$$ = 1; }
+	| MINUS {$$ = 2; }
+	//| EQUAL {std::cout<<"FUCKING EWUSL"; }
 	;
 term // Used in: arith_expr, term
 	: factor {$$=$1; std::cout<<"factor\n";}
@@ -484,8 +492,8 @@ atom // Used in: power
 	| LSQB opt_listmaker RSQB
 	| LBRACE opt_dictorsetmaker RBRACE
 	| BACKQUOTE testlist1 BACKQUOTE
-	| NAME {$$ = new IdentNode($1); std::cout<<"name\n";}
-	| NUMBER {$$ = new FloatLiteral($1); std::cout<<"number\n";}
+	| NAME {$$ = new IdentNode($1); Scope::scope.at(currentIndex)->stmts.push_back($$) ; std::cout<<"name\n"; }
+	| NUMBER {$$ = new FloatLiteral($1); Scope::scope.at(currentIndex)->stmts.push_back($$) ;std::cout<<"number\n";}
 	| plus_STRING
 	;
 pick_yield_expr_testlist_comp // Used in: opt_yield_test
@@ -560,7 +568,7 @@ star_COMMA_expr // Used in: exprlist, star_COMMA_expr
 	;
 testlist // Used in: expr_stmt, pick_yield_expr_testlist, return_stmt, for_stmt, opt_testlist, yield_expr
 	: test star_COMMA_test COMMA
-	| test star_COMMA_test
+	| test star_COMMA_test {$$ = $1; std::cout<<"Testtt\n"; }
 	;
 dictorsetmaker // Used in: opt_dictorsetmaker
 	: test COLON test pick_for_test_test
@@ -608,7 +616,7 @@ pick_argument // Used in: arglist
 	;
 argument // Used in: star_argument_COMMA, star_COMMA_argument, pick_argument
 	: test opt_comp_for
-	| test EQUAL test
+	| test EQUAL test {std::cout<<"EQUAL NODE ";}
 	;
 opt_comp_for // Used in: argument
 	: comp_for

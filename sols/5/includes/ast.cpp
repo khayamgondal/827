@@ -19,34 +19,27 @@ void evalStmts(std::vector<StmtsStruct*> s, std::vector<Node*> stmts) {
   lookupIndex ++;
     for (auto *curStmt : stmts) { 
 	FuncNode *funcNode = dynamic_cast<FuncNode*> (curStmt) ; 
-        if (funcNode == NULL) curStmt->eval()->print();
-        else  // start from lookup index and go in all scopes to find this fun signature
- 	  for (int i = lookupIndex ; i >= 0 ; i--) { //std::cout<<s.at(i)->name<<"LOOKING FOR "<<funcNode->getId()<<std::endl;
+        if (funcNode != NULL) 
+	  for (int i = lookupIndex ; i >= 0 ; i--) { //std::cout<<s.at(i)->name<<"LOOKING FOR "<<funcNode->getId()<<std::endl;
 	    if (s.at(i)->name == funcNode->getId()) { //we found the signature 
 	      evalStmts(s, s.at(i)->stmts);
 	      return;
             }
 	  }
+	CompBinaryNode *compNode = dynamic_cast<CompBinaryNode*> (curStmt) ; 
+	if (compNode != NULL) {compNode->eval()->print(); }
+
+	RetBinaryNode *retNode = dynamic_cast<RetBinaryNode*> (curStmt) ; 
+	if (retNode != NULL) return;
+
+	PrintBinaryNode *printNode = dynamic_cast<PrintBinaryNode*> (curStmt) ; 
+	if (printNode != NULL ) curStmt->eval()->print();
     }
 
 }
 
 void Scope::eval() {
   evalStmts(scope, scope.at(0)->stmts);
- // for (auto *curScope : scope) {
-
-  //}
-		/*	 for (int i = lookUpIndex ; i >= 0 ; i--) { std::cout<<"INSIDE ................";
-				auto *nextScope = Scope::scope.at(i); std::cout<<"NAAAAAAAAMMME"<<nextScope->name<<std::endl;
-					if (nextScope->name == (dynamic_cast<FuncNode*>(node))->getId()) { 
-						for (auto &stmt : nextScope->stmts) {
-							Node *funcNode = dynamic_cast<Node*> stmt ; 
-							if (funcNode != NULL) 
-
-							else	stmt->eval()->print();	
-						}			
-					}
-				}*/
 }
 
 AsgBinaryNode::AsgBinaryNode(Node* left, Node* right) : 
@@ -57,6 +50,10 @@ AsgBinaryNode::AsgBinaryNode(Node* left, Node* right) :
 }
 
 const Literal* FuncNode::eval() const {
+  return NULL;
+}
+
+const Literal* RetBinaryNode::eval() const {
   return NULL;
 }
 
@@ -71,7 +68,12 @@ const Literal* AsgBinaryNode::eval() const {
   //SymbolTable::getInstance().setValue(n, res);
   return res;
 }
-const Literal* EqequalBinaryNode::eval() const { 
+
+const Literal* PrintBinaryNode::eval() const { 
+  return left->eval();
+}
+
+const Literal* CompBinaryNode::eval() const { 
   if (!left || !right) {
     throw "error";
   }
