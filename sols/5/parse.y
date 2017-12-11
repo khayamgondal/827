@@ -311,10 +311,10 @@ compound_stmt // Used in: stmt
 	| decorated
 	;
 if_stmt // Used in: compound_stmt
-	: IF test COLON suite {Scope::scope.at(currentIndex)->stmts.push_back(new IfEndNode());} star_ELIF ELSE {
+	: IF test COLON suite {Scope::scope.at(currentIndex)->stmts.push_back(new IfEndNode()); } star_ELIF ELSE {
 	 Scope::scope.at(currentIndex)->stmts.push_back(new ElseStartNode()); /*std::cout<<"big fuckoff else";*/ } COLON suite 
 		{ Scope::scope.at(currentIndex)->stmts.push_back(new ElseEndNode()); /*std::cout<<"big daddy's home"; */}
-	| IF test COLON suite star_ELIF 
+	| IF test COLON suite {Scope::scope.at(currentIndex)->stmts.push_back(new IfEndNode()); } star_ELIF 
 	;
 star_ELIF // Used in: if_stmt, star_ELIF
 	: star_ELIF ELIF test COLON suite

@@ -19,11 +19,13 @@ const Literal* IdentNode::eval() const {
 }
 
 void evalScope(std::vector<StmtsStruct*> s, std::vector<Node*> stmts, int currentLevel) {
+	
 	for (auto *curStmt : stmts) {
 		FuncNode *funcNode = dynamic_cast<FuncNode*> (curStmt) ; 
 	        if (funcNode != NULL) { // try to find def in level + 1 OR size to 0
-				for (int i = std::min(((int)(s.size()))-1, currentLevel) ; i >= 0 ; i--) {
+				for (int i = std::min(((int)(s.size()))-1, currentLevel+1) ; i >= 0 ; i--) {
 				    if (s.at(i)->name == funcNode->getId()) { //we found the signature 
+				//	std::cout<<"LEVE  "<<currentLevel<< "found " << funcNode->getId()<<std::endl;
 				      evalScope(s, s.at(i)->stmts, currentLevel++);
 				      return;
 			            }
@@ -31,12 +33,13 @@ void evalScope(std::vector<StmtsStruct*> s, std::vector<Node*> stmts, int curren
 			}
 			CompBinaryNode *compNode = dynamic_cast<CompBinaryNode*> (curStmt) ; 
 			if (compNode != NULL) { //compNode->eval()->print(); 
+				//std::cout<<"IS"<<std::endl;
 		           lastFlag = (static_cast<FloatLiteral*> (const_cast<Literal*> ( compNode->eval() ) )->getVal() ); 
-			   ifFlag = lastFlag; 	// std::cout<<lastFlag<<std::endl; 			std::cout<<"IS"<<std::endl;
+			   ifFlag = lastFlag; 	//std::cout<<lastFlag<<std::endl; 			
 			}
 
 			IfEndNode *ifEndNode = dynamic_cast<IfEndNode*> (curStmt);
-			if(ifEndNode != NULL) { ifFlag = lastFlag;  //std::cout<<"IE"<<std::endl;
+			if(ifEndNode != NULL) { ifFlag = 1 ; //std::cout<<"IE"<<std::endl; //lastFlag;  //
 				}
 
 			ElseStartNode *elseStartNode = dynamic_cast<ElseStartNode*> (curStmt);
@@ -61,13 +64,15 @@ void evalScope(std::vector<StmtsStruct*> s, std::vector<Node*> stmts, int curren
 				if (retNode != NULL) return;
 
 				PrintBinaryNode *printNode = dynamic_cast<PrintBinaryNode*> (curStmt) ; 
-				if (printNode != NULL ) curStmt->eval()->print();
+				
+				if (printNode != NULL ) { curStmt->eval()->print();  //std::cout<<"IN PRINT\n";
+				}
 	
 			}
 	}
 }
 
-void evalStmts(std::vector<StmtsStruct*> s, std::vector<Node*> stmts) {
+/*void evalStmts(std::vector<StmtsStruct*> s, std::vector<Node*> stmts) {
  // if (lookupIndex < stmts.size()-1) 
   lookupIndex ++; std::cout<<"CURRENT index "<<lookupIndex<<std::endl;
   //std::cout<<lookupIndex<<std::endl;
@@ -117,16 +122,17 @@ void evalStmts(std::vector<StmtsStruct*> s, std::vector<Node*> stmts) {
 	}
     }
 
-}
+}*/
 
 void Scope::eval() {
-  lookupIndex = 0;
+  //lookupIndex = 0;
   //evalStmts(scope, scope.at(0)->stmts);
 for (auto *curStmt : scope.at(0)->stmts) {
 	FuncNode *funcNode = dynamic_cast<FuncNode*> (curStmt) ; 
         if (funcNode != NULL) { // try to find def in level + 1 OR size to 0
-			for (int i = std::min(((int)(scope.size()))-1, 1) ; i >= 0 ; i--) {
-			    if (scope.at(i)->name == funcNode->getId()) { //we found the signature 
+			for (int i = 1 ; i >= 0 ; i--) {
+			    if (scope.at(i)->name == funcNode->getId()) { //we found the signature  
+				//	 std::cout<<"LEVE  "<<i<< "found " << funcNode->getId()<<std::endl;
 			      evalScope(scope, scope.at(i)->stmts, 2);
 			      return;
 		            }
