@@ -52,6 +52,23 @@ protected:
   bool isDef;
 };
 
+class ElseStartNode : public Node {
+  public:
+    ElseStartNode() {    }
+   virtual const Literal* eval() const ;
+};
+
+class ElseEndNode : public Node {
+  public:
+    ElseEndNode()  {    }
+   virtual const Literal* eval() const ;
+};
+
+class IfEndNode : public Node {
+  public:
+    IfEndNode()  {    }
+   virtual const Literal* eval() const ;
+};
 
 class AsgBinaryNode : public BinaryNode {
 public:

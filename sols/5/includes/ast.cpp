@@ -9,6 +9,8 @@
 #include "externs.h"
 
 int lookupIndex = 0;
+int ifFlag = 1;
+int lastFlag = 1;
 
 const Literal* IdentNode::eval() const { 
   const Literal* val = SymbolTable::getInstance().getValue(ident);
@@ -27,15 +29,29 @@ void evalStmts(std::vector<StmtsStruct*> s, std::vector<Node*> stmts) {
             }
 	  }
 	CompBinaryNode *compNode = dynamic_cast<CompBinaryNode*> (curStmt) ; 
-	if (compNode != NULL) {compNode->eval()->print(); }
+	if (compNode != NULL) { //compNode->eval()->print(); 
+           lastFlag = (static_cast<FloatLiteral*> (const_cast<Literal*> ( compNode->eval() ) )->getVal() ); 
+	}
 
-	RetBinaryNode *retNode = dynamic_cast<RetBinaryNode*> (curStmt) ; 
-	if (retNode != NULL) return;
+	IfEndNode *ifEndNode = dynamic_cast<IfEndNode*> (curStmt);
+	if(ifEndNode != NULL) { ifFlag = lastFlag;  }
 
-	PrintBinaryNode *printNode = dynamic_cast<PrintBinaryNode*> (curStmt) ; 
-	if (printNode != NULL ) curStmt->eval()->print();
+	ElseStartNode *elseStartNode = dynamic_cast<ElseStartNode*> (curStmt);
+	if(elseStartNode != NULL) { if (ifFlag ==1) ifFlag = 0; else ifFlag = 1;  }
+
+	ElseEndNode *elseEndNode = dynamic_cast<ElseEndNode*> (curStmt);
+	if(elseEndNode != NULL) { ifFlag = 1;  }
+
+
+
+	if (ifFlag == 1) {
+		RetBinaryNode *retNode = dynamic_cast<RetBinaryNode*> (curStmt) ; 
+		if (retNode != NULL) return;
+
+		PrintBinaryNode *printNode = dynamic_cast<PrintBinaryNode*> (curStmt) ; 
+		if (printNode != NULL ) curStmt->eval()->print();
 	
-	//else curStmt->eval();
+	}
     }
 
 }
@@ -52,6 +68,16 @@ AsgBinaryNode::AsgBinaryNode(Node* left, Node* right) :
 }
 
 const Literal* FuncNode::eval() const {
+  return NULL;
+}
+const Literal* ElseStartNode::eval() const {
+  return NULL;
+}
+const Literal* IfEndNode::eval() const {
+  return NULL;
+}
+
+const Literal* ElseEndNode::eval() const {
   return NULL;
 }
 

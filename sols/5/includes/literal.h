@@ -64,6 +64,7 @@ public:
   FloatLiteral(float _val): val(_val) {}
 
   float getVal() { return val;}
+
   virtual const Literal* operator+(const Literal& rhs) const  {
     return rhs.opPlus(val);
   }

@@ -309,7 +309,9 @@ compound_stmt // Used in: stmt
 	| decorated
 	;
 if_stmt // Used in: compound_stmt
-	: IF test COLON suite star_ELIF ELSE COLON suite
+	: IF test COLON suite {Scope::scope.at(currentIndex)->stmts.push_back(new IfEndNode());} star_ELIF ELSE {
+	 Scope::scope.at(currentIndex)->stmts.push_back(new ElseStartNode()); /*std::cout<<"big fuckoff else";*/ } COLON suite 
+		{ Scope::scope.at(currentIndex)->stmts.push_back(new ElseEndNode()); /*std::cout<<"big daddy's home"; */}
 	| IF test COLON suite star_ELIF 
 	;
 star_ELIF // Used in: if_stmt, star_ELIF
@@ -321,8 +323,8 @@ while_stmt // Used in: compound_stmt
 	| WHILE test COLON suite 
 	;
 for_stmt // Used in: compound_stmt
-	: FOR exprlist IN testlist COLON suite ELSE COLON suite
-	| FOR exprlist IN testlist COLON suite
+	: FOR exprlist IN testlist COLON suite ELSE COLON suite {std::cout<<"big fuckoff else"; }
+	| FOR exprlist IN testlist COLON suite {std::cout<<"big fuckoff else"; }
 	;
 try_stmt // Used in: compound_stmt
 	: TRY COLON suite plus_except opt_ELSE opt_FINALLY
@@ -333,7 +335,7 @@ plus_except // Used in: try_stmt, plus_except
 	| except_clause COLON suite
 	;
 opt_ELSE // Used in: try_stmt
-	: ELSE COLON suite
+	: ELSE COLON suite {std::cout<<"else found";}
 	| %empty
 	;
 opt_FINALLY // Used in: try_stmt
@@ -393,7 +395,7 @@ test // Used in: opt_EQUAL_test, print_stmt, star_COMMA_test, opt_test, plus_COM
 	;
 
 opt_IF_ELSE // Used in: test
-	: IF or_test ELSE test /*{std::cout << "IF or_test ELSE test"; }*/
+	: IF or_test ELSE {std::cout <<"else started"; } test {std::cout << "IF or_test ELSE test"; }
 	| %empty
 	;
 or_test // Used in: old_test, test, opt_IF_ELSE, or_test, comp_for
