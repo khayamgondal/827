@@ -272,8 +272,11 @@ comment   #.*
 "with"     { return WITH; }
 "yield"    { return YIELD; }
 
-{number}   { ++numbers; yylval.fltNumber = atof(yytext); return NUMBER; }
-{name}     { ++identifiers; yylval.id = new char[yyleng+1]; strcpy(yylval.id, yytext); return NAME; }
+{floatnumber} {++numbers; yylval.fltNumber = atof(yytext); return FLOAT; }
+{integer} {++numbers; yylval.intNumber = atoi(yytext); return INT; }
+{number}   { ++numbers; return NUMBER; }
+{name}     { ++identifiers; yylval.id = new char[yyleng+1];
+            strcpy(yylval.id, yytext); return NAME; }
 
 <<EOF>>    { handle_eof(); return ENDMARKER; }
 

@@ -38,21 +38,17 @@ protected:
   Node *right;
 };
 
-class FuncNode : public Node {
+/*class FuncNode : public Node {
 public:
-  FuncNode(const std::string id, Node* stmts, bool isDef) : Node(), id(id), stmts(stmts), isDef(isDef) {}
-  std::string getId() const {return id; }
-  Node* getStmts() const {return stmts; }
-  FuncNode(const FuncNode&) = delete;
-  FuncNode& operator=(const FuncNode&) = delete;
+  FuncNode(const std::string id, Node* stmts) : Node(), id(id), stmts(stmts) {
+
+  }
   virtual const Literal* eval() const;	
 protected:
   std::string id;
   Node *stmts;
-  bool isDef;
 };
-
-
+*/
 class AsgBinaryNode : public BinaryNode {
 public:
   AsgBinaryNode(Node* left, Node* right);

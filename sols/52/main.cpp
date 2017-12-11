@@ -4,13 +4,10 @@
 #include <stdlib.h>
 #include "includes/symbolTable.h"
 #include "includes/poolOfNodes.h"
-#include "includes/externs.h"
 
 extern int yyparse();
 
 extern void init_scanner(FILE *);
-std::vector<StmtsStruct*> Scope::scope;
-//void Scope::eval();
 
 static FILE * 
 open_file(const char *filename) {
@@ -24,11 +21,6 @@ open_file(const char *filename) {
 
 
 int main(int argc, char * argv[]) {
- #if YYDEBUG
-        yydebug = 1;
- #endif
-
-  Scope::scope.push_back(new StmtsStruct());
   FILE *input_file = stdin;
   if (argc > 1) { /* user-supplied filename */
     input_file = open_file(argv[1]);
