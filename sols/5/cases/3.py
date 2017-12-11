@@ -4,6 +4,7 @@ def fff():
   y = 4
   if y < 3:
     print 99
+    return
   else:
     x = 4
     x = x+ 15

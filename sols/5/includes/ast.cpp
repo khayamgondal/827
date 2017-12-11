@@ -18,7 +18,9 @@ const Literal* IdentNode::eval() const {
 }
 
 void evalStmts(std::vector<StmtsStruct*> s, std::vector<Node*> stmts) {
+ // if (lookupIndex < stmts.size()-1) 
   lookupIndex ++;
+  //std::cout<<lookupIndex<<std::endl;
     for (auto *curStmt : stmts) {
 	FuncNode *funcNode = dynamic_cast<FuncNode*> (curStmt) ; 
         if (funcNode != NULL) 
@@ -31,18 +33,29 @@ void evalStmts(std::vector<StmtsStruct*> s, std::vector<Node*> stmts) {
 	CompBinaryNode *compNode = dynamic_cast<CompBinaryNode*> (curStmt) ; 
 	if (compNode != NULL) { //compNode->eval()->print(); 
            lastFlag = (static_cast<FloatLiteral*> (const_cast<Literal*> ( compNode->eval() ) )->getVal() ); 
+	   ifFlag = lastFlag; 	// std::cout<<lastFlag<<std::endl; 			std::cout<<"IS"<<std::endl;
 	}
 
 	IfEndNode *ifEndNode = dynamic_cast<IfEndNode*> (curStmt);
-	if(ifEndNode != NULL) { ifFlag = lastFlag;  }
+	if(ifEndNode != NULL) { ifFlag = lastFlag;  //std::cout<<"IE"<<std::endl;
+		}
 
 	ElseStartNode *elseStartNode = dynamic_cast<ElseStartNode*> (curStmt);
-	if(elseStartNode != NULL) { if (ifFlag ==1) ifFlag = 0; else ifFlag = 1;  }
+	if(elseStartNode != NULL) { if (lastFlag ==1) ifFlag = 0; else ifFlag = 1; //std::cout<<"ES"<<std::endl; 
+	}
 
 	ElseEndNode *elseEndNode = dynamic_cast<ElseEndNode*> (curStmt);
-	if(elseEndNode != NULL) { ifFlag = 1;  }
+	if(elseEndNode != NULL) { ifFlag = 1;  //std::cout<<"EE"<<std::endl;
+	}
+	
+	/*AsgBinaryNode *asgBinaryNode = dynamic_cast<AsgBinaryNode*> (curStmt);
+	if(asgBinaryNode != NULL) { curStmt->eval();	}
 
+	AddBinaryNode *addBinaryNode = dynamic_cast<AddBinaryNode*> (curStmt);
+	if(addBinaryNode != NULL) { curStmt->eval();	}*/
 
+	//else curStmt->eval();
+	
 
 	if (ifFlag == 1) {
 		RetBinaryNode *retNode = dynamic_cast<RetBinaryNode*> (curStmt) ; 
@@ -57,6 +70,7 @@ void evalStmts(std::vector<StmtsStruct*> s, std::vector<Node*> stmts) {
 }
 
 void Scope::eval() {
+  lookupIndex = 0;
   evalStmts(scope, scope.at(0)->stmts);
 }
 

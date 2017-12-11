@@ -148,7 +148,7 @@ small_stmt // Used in: simple_stmt, star_SEMI_small_stmt
 expr_stmt // Used in: small_stmt
 	: testlist augassign pick_yield_expr_testlist //{std::cout<<"exp state"; }
 	| testlist star_EQUAL // {std::cout<<"exp state 2"; }
-	| testlist EQUAL pick_yield_expr_testlist  {$$ = new AsgBinaryNode($1, $3); 
+	| testlist EQUAL pick_yield_expr_testlist  {$$ = new AsgBinaryNode($1, $3); //$$->eval()->print();
 						Scope::scope.at(currentIndex)->stmts.push_back($$);						
 						//std::cout<<"may be equal";
 						}
@@ -417,12 +417,12 @@ comparison // Used in: not_test, comparison
 	;
 comp_op // Used in: comparison
 	: LESS { $$ = 4; /*std::cout<<"LESS"; */}
-	| GREATER
-	| EQEQUAL
-	| GREATEREQUAL
-	| LESSEQUAL
+	| GREATER {$$ =2;}
+	| EQEQUAL { $$ = 0;}
+	| GREATEREQUAL {$$=3;}
+	| LESSEQUAL {$$ = 5; }
 	| GRLT
-	| NOTEQUAL
+	| NOTEQUAL { $$ = 1;}
 	| IN
 	| NOT IN
 	| IS
