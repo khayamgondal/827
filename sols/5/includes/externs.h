@@ -7,6 +7,7 @@ class StmtsStruct{
 	public:
 		std::vector<Node*> stmts;
 		std::string name = "main";
+		std::string arg;
 	};	
 
 class Scope {

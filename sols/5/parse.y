@@ -36,7 +36,7 @@
 
 %type<id> NAME
 %type<fltNumber> NUMBER
-%type <node> atom opt_test test testlist or_test and_test not_test comparison expr xor_expr and_expr shift_expr arith_expr term factor power pick_yield_expr_testlist expr_stmt print_stmt
+%type <node> atom opt_test test testlist or_test and_test not_test comparison expr xor_expr and_expr shift_expr arith_expr term factor power pick_yield_expr_testlist expr_stmt print_stmt argument
 
 %type<simType> star_trailer comp_op pick_PLUS_MINUS
 
@@ -80,6 +80,7 @@ decorated // Used in: compound_stmt
 	;
 funcdef // Used in: decorated, compound_stmt
 	: {currentIndex++; Scope::scope.push_back(new StmtsStruct()); 
+		Scope::scope.at(currentIndex)->stmts.clear(); 
 		} DEF NAME { Scope::scope.at(currentIndex)->name = $3; } parameters COLON suite {currentIndex--; }
 	;
 parameters // Used in: funcdef
@@ -87,8 +88,8 @@ parameters // Used in: funcdef
 	| LPAR RPAR// {std::cout<<"lrpar"; }
 	;
 varargslist // Used in: parameters, old_lambdef, lambdef
-	: star_fpdef_COMMA pick_STAR_DOUBLESTAR
-	| star_fpdef_COMMA fpdef opt_EQUAL_test opt_COMMA
+	: star_fpdef_COMMA pick_STAR_DOUBLESTAR 
+	| star_fpdef_COMMA fpdef opt_EQUAL_test opt_COMMA 
 	;
 opt_EQUAL_test // Used in: varargslist, star_fpdef_COMMA
 	: EQUAL test {std::cout<<"EQUAL TEST";}
@@ -103,15 +104,15 @@ opt_DOUBLESTAR_NAME // Used in: pick_STAR_DOUBLESTAR
 	| %empty
 	;
 pick_STAR_DOUBLESTAR // Used in: varargslist
-	: STAR NAME opt_DOUBLESTAR_NAME
-	| DOUBLESTAR NAME
+	: STAR NAME opt_DOUBLESTAR_NAME 
+	| DOUBLESTAR NAME 
 	;
 opt_COMMA // Used in: varargslist, opt_test, opt_test_2, testlist_safe, listmaker, testlist_comp, pick_for_test_test, pick_for_test, pick_argument
 	: COMMA
 	| %empty
 	;
 fpdef // Used in: varargslist, star_fpdef_COMMA, fplist, star_fpdef_notest
-	: NAME// {std::cout<<"lpar fplist rpar";}
+	: NAME {Scope::scope.at(currentIndex)->arg = $1; } //just support for 1 arg
 	| LPAR fplist RPAR// {std::cout<<"lpar fplist rpar";}
 	;
 fplist // Used in: fpdef
@@ -494,14 +495,15 @@ power // Used in: factor
 			if (currentIndex == 0) { //start eval. start from cur scope and look all the way up
 				//std::cout<<"START EVAL\n";
 				Scope s;
-				s.eval();		
+				s.eval();
+				s.scope.at(0)->stmts.clear();		
 			} 
 		}else $$=$1;   
 	//std::cout<<"atom star_trailer\n";
 	} 
 	;
 star_trailer // Used in: power, star_trailer
-	: star_trailer trailer { $$ = 1; /*std::cout<<"star_trailer trailer \n";*/} 
+	: star_trailer trailer { ;$$ = 1; /*std::cout<<"star_trailer trailer \n";*/} 
 	| %empty { $$ = 0;  } // hack to check if fun call or not
 	;
 atom // Used in: power
@@ -632,8 +634,8 @@ pick_argument // Used in: arglist
 	| DOUBLESTAR test
 	;
 argument // Used in: star_argument_COMMA, star_COMMA_argument, pick_argument
-	: test opt_comp_for
-	| test EQUAL test {std::cout<<"EQUAL NODE ";}
+	: test opt_comp_for { Scope::scope.at(currentIndex)->stmts.push_back(new ArgBinaryNode($1));}
+	| test EQUAL test {$$ = new AsgBinaryNode($1, $3); $$->eval(); /*Scope::scope.at(currentIndex)->stmts.push_back($$) ;*/ std::cout<<"EQUAL NODE ";}
 	;
 opt_comp_for // Used in: argument
 	: comp_for

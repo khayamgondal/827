@@ -9,24 +9,33 @@
 #include "symbolTable.h"
 #include "externs.h"
 
-int lookupIndex = 0;
+//int lookupIndex = 0;
 int ifFlag = 1;
 int lastFlag = 1;
 
+ArgBinaryNode *argNode;
+	
 const Literal* IdentNode::eval() const { 
   const Literal* val = SymbolTable::getInstance().getValue(ident);
   return val;
 }
 
-void evalScope(std::vector<StmtsStruct*> s, std::vector<Node*> stmts, int currentLevel) {
+void evalScope(std::vector<StmtsStruct*> s, std::vector<Node*> stmts, int currentLevel, ArgBinaryNode* argNode) {
 	
 	for (auto *curStmt : stmts) {
+		if ( (dynamic_cast<ArgBinaryNode*> (curStmt)) != NULL )  {
+			argNode = dynamic_cast<ArgBinaryNode*> (curStmt);  }
+			
 		FuncNode *funcNode = dynamic_cast<FuncNode*> (curStmt) ; 
 	        if (funcNode != NULL) { // try to find def in level + 1 OR size to 0
 				for (int i = std::min(((int)(s.size()))-1, currentLevel+1) ; i >= 0 ; i--) {
 				    if (s.at(i)->name == funcNode->getId()) { //we found the signature 
 				//	std::cout<<"LEVE  "<<currentLevel<< "found " << funcNode->getId()<<std::endl;
-				      evalScope(s, s.at(i)->stmts, currentLevel++);
+						if (argNode != NULL) { 
+						Node *node = new AsgBinaryNode(new IdentNode(s.at(i)->arg), argNode); 
+						 node->eval(); }
+				//std::cout<<"HERE"; 
+				      evalScope(s, s.at(i)->stmts, currentLevel++, argNode);
 				      return;
 			            }
 				}
@@ -69,7 +78,8 @@ void evalScope(std::vector<StmtsStruct*> s, std::vector<Node*> stmts, int curren
 				}
 	
 			}
-	}
+	} 
+	stmts.clear();
 }
 
 /*void evalStmts(std::vector<StmtsStruct*> s, std::vector<Node*> stmts) {
@@ -125,20 +135,38 @@ void evalScope(std::vector<StmtsStruct*> s, std::vector<Node*> stmts, int curren
 }*/
 
 void Scope::eval() {
-  //lookupIndex = 0;
+	//lookupIndex = 0;
   //evalStmts(scope, scope.at(0)->stmts);
-for (auto *curStmt : scope.at(0)->stmts) {
-	FuncNode *funcNode = dynamic_cast<FuncNode*> (curStmt) ; 
+//	for (auto * s : scope) std::cout<<s->stmts.size()<<std::endl; 
+	int loopIndex = 0;
+	
+for (auto *curStmt : scope.at(0)->stmts) { 
+	//std::cout<<scope.at(0)->stmts.size()<<std::endl;;
+		if ( (dynamic_cast<ArgBinaryNode*> (curStmt)) != NULL )  {
+			argNode = dynamic_cast<ArgBinaryNode*> (curStmt); 
+				//argNode->eval()->print(); 
+			//	scope.at(0)->stmts.erase(scope.at(0)->stmts.begin() + loopIndex);
+		}
+		FuncNode *funcNode = dynamic_cast<FuncNode*> (curStmt) ; 
         if (funcNode != NULL) { // try to find def in level + 1 OR size to 0
-			for (int i = 1 ; i >= 0 ; i--) {
+			
+			for (int i = 1 ; i >= 0 ; i--) { 				
+			//	 std::cout<<scope.at(i)->name <<" LEVE  "<<i<< "looking for " << funcNode->getId()<<std::endl;
 			    if (scope.at(i)->name == funcNode->getId()) { //we found the signature  
-				//	 std::cout<<"LEVE  "<<i<< "found " << funcNode->getId()<<std::endl;
-			      evalScope(scope, scope.at(i)->stmts, 2);
+					if (argNode != NULL) { 
+					Node *node = new AsgBinaryNode(new IdentNode(scope.at(i)->arg), argNode); 
+					 node->eval();
+					 //std::cout << scope.at(i)->arg << "is" ; node->eval()->print();
+				 }
+			      evalScope(scope, scope.at(i)->stmts, 2, argNode);
+	  			//scope.at(0)->stmts.erase(scope.at(0)->stmts.begin() + loopIndex);
 			      return;
 		            }
 			}
 		}
+	loopIndex ++; 
 	}
+	 //scope.at(0)->stmts.clear(); 	for (auto * s : scope) std::cout<<s->stmts.size()<<std::endl; 
 }
 
 AsgBinaryNode::AsgBinaryNode(Node* left, Node* right) : 
@@ -160,6 +188,9 @@ const Literal* ElseEndNode::eval() const {
   return NULL;
 }
 
+const Literal* ArgBinaryNode::eval() const {
+  return left->eval();
+}
 const Literal* RetBinaryNode::eval() const {
   return NULL;
 }

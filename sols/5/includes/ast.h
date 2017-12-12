@@ -70,6 +70,13 @@ class IfEndNode : public Node {
    virtual const Literal* eval() const ;
 };
 
+class ArgBinaryNode : public BinaryNode {
+  public:
+    ArgBinaryNode(Node* left) : BinaryNode(left, NULL) {    }
+   virtual const Literal* eval() const ;
+};
+
+
 class AsgBinaryNode : public BinaryNode {
 public:
   AsgBinaryNode(Node* left, Node* right);
