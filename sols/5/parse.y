@@ -38,7 +38,7 @@
 %type<fltNumber> NUMBER
 %type <node> atom opt_test test testlist or_test and_test not_test comparison expr xor_expr and_expr shift_expr arith_expr term factor power pick_yield_expr_testlist expr_stmt print_stmt argument
 
-%type<simType> star_trailer comp_op pick_PLUS_MINUS
+%type<simType> star_trailer comp_op pick_PLUS_MINUS pick_multop
 
 %debug 
 
@@ -467,10 +467,12 @@ pick_PLUS_MINUS // Used in: arith_expr
 	;
 term // Used in: arith_expr, term
 	: factor {$$=$1;   /* std::cout<<"factor\n";*/}
-	| term pick_multop factor
+	| term pick_multop factor { if ($2 == 1) {
+			$$ = new MulBinaryNode($1, $3); Scope::scope.at(currentIndex)->stmts.push_back($$);
+		} }
 	;
 pick_multop // Used in: term
-	: STAR
+	: STAR { $$ = 1; }
 	| SLASH
 	| PERCENT
 	| DOUBLESLASH
